@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberSnap - Profile</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0a0713;
+        color: white;
+    }
+
+    .container {
+        width: 80%;
+        max-width: 600px;
+        margin: 80px auto;
+    }
+
+    .card {
+        background: #171022;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    /* ---- Avatar ---- */
+    .avatar-wrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .avatar {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, #a855f7, #ec4899);
+        box-shadow: 0 0 40px rgba(168, 85, 247, 0.45);
+    }
+
+    .avatar svg {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: block;
+    }
+
+    h1 {
+        text-align: center;
+        color: #c084fc;
+        margin-bottom: 35px;
+    }
+
+    .profile-item {
+        background: #21162f;
+        padding: 18px;
+        margin-bottom: 15px;
+        border-radius: 12px;
+    }
+
+    .profile-item strong {
+        display: block;
+        color: #c084fc;
+        margin-bottom: 6px;
+    }
+
+    .profile-item span {
+        color: #e5e7eb;
+    }
+
+    .buttons {
+        margin-top: 30px;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .change-btn { background: #a855f7; }
+    .change-btn:hover { background: #9333ea; }
+
+    .logout-btn { background: #ec4899; }
+    .logout-btn:hover { background: #db2777; }
+
+    .home-btn { background: #6366f1; }
+    .home-btn:hover { background: #4f46e5; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+
+        <div class="avatar-wrap">
+            <div class="avatar">
+                <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Profile picture">
+                    <defs>
+                        <linearGradient id="avBg" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#2a1745"/>
+                            <stop offset="1" stop-color="#1a0f2b"/>
+                        </linearGradient>
+                        <linearGradient id="avFig" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#c084fc"/>
+                            <stop offset="1" stop-color="#ec4899"/>
+                        </linearGradient>
+                        <clipPath id="avClip"><circle cx="60" cy="60" r="60"/></clipPath>
+                    </defs>
+                    <g clip-path="url(#avClip)">
+                        <rect width="120" height="120" fill="url(#avBg)"/>
+                        <circle cx="60" cy="60" r="46" fill="none" stroke="rgba(168,85,247,0.25)" stroke-width="1"/>
+                        <!-- head -->
+                        <circle cx="60" cy="46" r="20" fill="url(#avFig)"/>
+                        <!-- shoulders -->
+                        <path d="M18 120c0-26 18-42 42-42s42 16 42 42z" fill="url(#avFig)"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <h1>My Profile</h1>
+
+        {% if user.is_authenticated %}
+
+            <div class="profile-item">
+                <strong>Username</strong>
+                <span>{{ user.username }}</span>
+            </div>
+
+            <div class="profile-item">
+                <strong>Email</strong>
+                <span>{{ user.email }}</span>
+            </div>
+
+        {% else %}
+
+            <div class="profile-item">
+                <span>You are not logged in.</span>
+            </div>
+
+        {% endif %}
+
+        <div class="buttons">
+            <a href="{% url 'home' %}" class="btn home-btn">Back to Home</a>
+            <a href="{% url 'logout' %}" class="btn logout-btn">Logout</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

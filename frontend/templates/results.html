@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CyberSnap — Scan Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #07030f; --panel: #120a20; --panel-2: #1a0f2e; --line: #2e1d4d;
+    --text: #f4ecff; --muted: #b9a6d6; --purple: #a855f7; --pink: #ec4899;
+    --grad: linear-gradient(90deg, #a855f7, #ec4899);
+    --low: #4ade80; --medium: #fbbf24; --high: #fb4f8a; --risk: var(--medium);
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0; font-family: "Inter", Arial, sans-serif;
+    background:
+        radial-gradient(900px 500px at 85% -10%, rgba(168,85,247,.22), transparent 60%),
+        radial-gradient(700px 400px at 0% 40%, rgba(236,72,153,.10), transparent 60%),
+        var(--bg);
+    background-attachment: fixed; color: var(--text); min-height: 100vh;
+}
+a { color: inherit; text-decoration: none; }
+.container { width: 88%; max-width: 1100px; margin: 0 auto; }
+
+/* ---------- Nav ---------- */
+nav { display: flex; align-items: center; justify-content: space-between; padding: 28px 0; }
+.brand { display: flex; align-items: center; gap: 12px; font-family: "Sora", sans-serif; font-weight: 700; font-size: 24px; }
+.brand-mark {
+    width: 38px; height: 38px; border-radius: 10px; background: var(--grad);
+    display: grid; place-items: center; box-shadow: 0 0 24px rgba(168,85,247,.45);
+}
+
+/* Back to Home button */
+.home-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 20px 8px 8px; border-radius: 999px;
+    border: 1px solid #5b3d8a; background: rgba(168,85,247,.10);
+    color: var(--text); font-weight: 600; font-size: 14px;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.home-btn .ic {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--grad);
+    display: grid; place-items: center; transition: transform .2s;
+}
+.home-btn:hover { border-color: var(--purple); box-shadow: 0 0 22px rgba(168,85,247,.35); transform: translateY(-1px); }
+.home-btn:hover .ic { transform: translateX(-3px); }
+.home-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* ---------- Banner ---------- */
+.banner {
+    position: relative; overflow: hidden;
+    display: grid; grid-template-columns: 1.1fr 1fr; align-items: center;
+    background: linear-gradient(135deg, var(--panel-2), var(--panel));
+    border: 1px solid var(--line); border-radius: 28px; margin-top: 10px;
+}
+.banner-text { padding: 48px 48px 48px 52px; position: relative; z-index: 2; }
+.chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.03);
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; color: var(--muted);
+}
+.chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--pink); }
+h1 {
+    font-family: "Sora", sans-serif; font-weight: 800;
+    font-size: clamp(32px, 4.6vw, 52px); line-height: 1.08;
+    margin: 22px 0 14px; letter-spacing: -.02em;
+}
+h1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.banner-text p.lead { color: var(--muted); font-size: 17px; line-height: 1.7; margin: 0; max-width: 440px; }
+.banner-visual {
+    position: relative; align-self: stretch; min-height: 340px;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 28%);
+}
+.banner-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+.banner-visual::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(135deg, rgba(168,85,247,.25), rgba(236,72,153,.12));
+    mix-blend-mode: soft-light;
+}
+
+/* ---------- Layout ---------- */
+.grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; margin-top: 24px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 28px; }
+.card h3 { font-family: "Sora", sans-serif; font-size: 18px; margin: 0 0 20px; }
+
+/* Risk */
+.risk-card { text-align: center; align-self: start; }
+.gauge { width: 190px; height: 190px; margin: 4px auto 18px; position: relative; }
+.gauge svg { transform: rotate(-90deg); }
+.gauge .track { stroke: var(--line); }
+.gauge .fill { stroke: var(--risk); stroke-linecap: round; transition: stroke-dashoffset .9s ease, stroke .3s; filter: drop-shadow(0 0 8px var(--risk)); }
+.gauge-center { position: absolute; inset: 0; display: grid; place-content: center; }
+.gauge-center b { font-family: "Sora", sans-serif; font-size: 44px; line-height: 1; }
+.gauge-center small { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.risk { font-family: "Sora", sans-serif; font-size: 22px; font-weight: 700; color: var(--risk); }
+#summary { color: var(--muted); line-height: 1.6; margin: 10px 0 0; font-size: 15px; }
+
+/* Findings */
+.item {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--pink);
+    padding: 16px 18px; border-radius: 14px; margin-bottom: 12px;
+}
+.item:last-child { margin-bottom: 0; }
+.item-icon { flex: none; width: 36px; height: 36px; border-radius: 10px; background: rgba(168,85,247,.15); display: grid; place-items: center; }
+.type { color: #d8b4fe; font-weight: 600; font-size: 14px; margin-bottom: 4px; text-transform: capitalize; }
+.value { color: var(--text); word-break: break-word; font-size: 15px; }
+.no-data { color: var(--low); font-size: 17px; margin: 0; }
+.error { color: var(--high); margin: 0; }
+
+/* Actions */
+.actions { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+button { font: inherit; font-weight: 600; border: none; cursor: pointer; padding: 14px 28px; border-radius: 999px; transition: transform .15s, box-shadow .15s; }
+button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+button:hover { transform: translateY(-1px); }
+.protect { background: var(--grad); color: #fff; box-shadow: 0 10px 30px rgba(168,85,247,.4); }
+.scan { background: transparent; color: var(--text); border: 1px solid #5b3d8a; }
+.scan:hover { background: rgba(168,85,247,.12); }
+
+footer { text-align: center; color: #6f5a92; font-size: 13px; padding: 40px 0 36px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+    .banner { grid-template-columns: 1fr; }
+    .banner-text { padding: 32px 26px 8px; }
+    .banner-visual { min-height: 240px; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 30%); mask-image: linear-gradient(180deg, transparent 0, #000 30%); }
+    .grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) { .home-btn .txt { display: none; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ===== Redaction overlay ===== */
+.stage {
+    position: fixed; inset: 0; z-index: 100; display: none; place-items: center;
+    background: rgba(7,3,15,.86); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); padding: 20px;
+}
+.stage.on { display: grid; }
+.stage-card {
+    width: min(640px, 94vw); text-align: center; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 22px; padding: 24px;
+    box-shadow: 0 0 60px rgba(168,85,247,.3);
+}
+.stage-card h3 { font-family: "Sora", sans-serif; font-size: 18px; margin: 0 0 16px; }
+.rd-frame { position: relative; aspect-ratio: 16/10; overflow: hidden; border-radius: 16px; border: 1px solid var(--line); background: var(--panel-2); }
+.rd-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.rd-frame .rd-nopreview { position: absolute; inset: 0; display: none; place-items: center; color: var(--muted); font-size: 15px; }
+.rd-frame.nopreview .rd-nopreview { display: grid; }
+.rd-frame.nopreview #rdBefore { display: none; }
+#rdAfter { clip-path: inset(0 100% 0 0); transition: clip-path .9s ease; }
+.rd-frame.done #rdAfter { clip-path: inset(0 0 0 0); }
+.rd-frame::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; z-index: 3;
+    background: linear-gradient(90deg, transparent, var(--pink), var(--purple), transparent);
+    box-shadow: 0 0 22px 6px rgba(236,72,153,.55); animation: rdScan 1.4s ease-in-out infinite;
+}
+.rd-frame.done::after { display: none; }
+@keyframes rdScan { 0% { top: 0 } 50% { top: calc(100% - 3px) } 100% { top: 0 } }
+.rd-frame::before {
+    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(135deg, rgba(168,85,247,.18), rgba(236,72,153,.10)); transition: opacity .4s;
+}
+.rd-frame.done::before { opacity: 0; }
+.rd-label { margin: 16px 0 0; font-weight: 600; font-size: 16px; color: var(--text); }
+.rd-label .dots { animation: rdDots 1.2s steps(4) infinite; }
+@keyframes rdDots { 0% { opacity: .2 } 50% { opacity: 1 } 100% { opacity: .2 } }
+.rd-label.ok { color: var(--low); }
+.rd-actions { display: none; margin-top: 18px; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.rd-actions.show { display: flex; }
+.rd-actions a.protect { display: inline-block; font-weight: 600; padding: 14px 28px; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) {
+    .rd-frame::after, .rd-label .dots { animation: none; }
+    #rdAfter { transition: none; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <!-- Nav with Back to Home -->
+    <nav>
+        <a class="brand" href="/home/">
+            <span class="brand-mark">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>
+            </span>
+            CyberSnap
+        </a>
+        <a class="home-btn" href="/home/">
+            <span class="ic">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </span>
+            <span><span class="txt">Back to </span>Home</span>
+        </a>
+    </nav>
+
+    <!-- Banner -->
+    <section class="banner">
+        <div class="banner-text">
+            <span class="chip"><i></i> Scan complete</span>
+            <h1>Here's what we found in your <span>screenshot</span></h1>
+            <p class="lead">Review the items below before you share. You can redact them or scan another image.</p>
+        </div>
+        <div class="banner-visual">
+            <!-- PASTE YOUR ORIGINAL data:image/jpeg;base64,... VALUE INTO src BELOW -->
+
+        </div>
+    </section>
+
+    <!-- Results -->
+    <div class="grid">
+        <div class="card risk-card">
+            <h3>Privacy risk</h3>
+            <div class="gauge">
+                <svg width="190" height="190" viewBox="0 0 190 190">
+                    <circle class="track" cx="95" cy="95" r="80" fill="none" stroke-width="14"/>
+                    <circle class="fill" id="gaugeFill" cx="95" cy="95" r="80" fill="none" stroke-width="14"
+                            stroke-dasharray="502.65" stroke-dashoffset="502.65"/>
+                </svg>
+                <div class="gauge-center">
+                    <b id="count">–</b>
+                    <small>items found</small>
+                </div>
+            </div>
+            <div class="risk" id="riskLevel">Analyzing...</div>
+            <p id="summary"></p>
+        </div>
+
+        <div>
+            <div class="card">
+                <h3>Detected sensitive information</h3>
+                <div id="results">Analyzing...</div>
+            </div>
+
+            <div class="card" style="margin-top:24px;">
+                <h3>Protection</h3>
+                <div class="actions" style="margin-top:0;">
+                    <button class="protect" onclick="protectImage()">Redact sensitive data</button>
+                    <button class="scan" onclick="scanAgain()">Scan another screenshot</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>CyberSnap — Your trusted screenshot privacy layer</footer>
+</div>
+
+<!-- Redaction overlay -->
+<div class="stage" id="stage" role="dialog" aria-modal="true" aria-label="Redacting screenshot">
+    <div class="stage-card">
+        <h3>Protecting your screenshot</h3>
+        <div class="rd-frame" id="rdFrame">
+            <img id="rdBefore" alt="Original screenshot">
+            <div class="rd-nopreview">Redacting your screenshot…</div>
+            <img id="rdAfter" alt="Protected screenshot">
+        </div>
+        <p class="rd-label" id="rdLabel">Redacting<span class="dots">…</span></p>
+        <div class="rd-actions" id="rdActions">
+            <a class="protect" id="rdDownload" href="#">Download protected image</a>
+            <button class="scan" id="rdClose" type="button">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const storedResult = sessionStorage.getItem("cybersnap_result");
+
+const resultsContainer = document.getElementById("results");
+const riskLevel = document.getElementById("riskLevel");
+const summary = document.getElementById("summary");
+const gaugeFill = document.getElementById("gaugeFill");
+const countEl = document.getElementById("count");
+
+const CIRC = 502.65;
+
+function setRisk(label, color, total, fraction) {
+    riskLevel.innerText = label;
+    document.documentElement.style.setProperty("--risk", color);
+    countEl.innerText = total;
+    gaugeFill.style.strokeDashoffset = CIRC * (1 - fraction);
+}
+
+const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d8b4fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`;
+
+/* No result available */
+if (!storedResult) {
+    setRisk("No result", "#b9a6d6", "–", 0);
+    summary.innerText = "Please upload a screenshot from the CyberSnap Home page.";
+    resultsContainer.innerHTML = '<p class="error">No scan result available.</p>';
+}
+
+/* Result available */
+else {
+    try {
+        const result = JSON.parse(storedResult);
+        const detected = result.detected_sensitive_data || {};
+        let total = 0;
+
+        resultsContainer.innerHTML = "";
+
+        for (const type in detected) {
+            const values = detected[type];
+            if (Array.isArray(values)) {
+                values.forEach(value => {
+                    total++;
+                    const item = document.createElement("div");
+                    item.className = "item";
+                    item.innerHTML = `<div class="item-icon">${ICON}</div><div><div class="type"></div><div class="value"></div></div>`;
+                    /* textContent keeps scanned text from being run as HTML */
+                    item.querySelector(".type").textContent = type.replace(/_/g, " ");
+                    item.querySelector(".value").textContent = value;
+                    resultsContainer.appendChild(item);
+                });
+            }
+        }
+
+        if (total === 0) {
+            resultsContainer.innerHTML = '<p class="no-data">✓ No sensitive information detected.</p>';
+            setRisk("Low risk", "#4ade80", 0, 0.08);
+            summary.innerText = "Your screenshot does not contain detected sensitive information.";
+        } else if (total <= 2) {
+            setRisk("Medium risk", "#fbbf24", total, 0.5);
+            summary.innerText = total + " sensitive item(s) detected.";
+        } else {
+            setRisk("High risk", "#fb4f8a", total, 0.92);
+            summary.innerText = total + " sensitive item(s) detected.";
+        }
+    } catch (error) {
+        console.error("Result parsing error:", error);
+        setRisk("Error", "#fb4f8a", "–", 0);
+        summary.innerText = "Unable to process the scan result.";
+        resultsContainer.innerHTML = '<p class="error">Invalid scan result.</p>';
+    }
+}
+
+/* Scan another screenshot */
+function scanAgain() {
+    sessionStorage.removeItem("cybersnap_result");
+    window.location.href = "/home/";
+}
+
+/* ---------- Redaction overlay ---------- */
+const stage      = document.getElementById("stage");
+const rdFrame    = document.getElementById("rdFrame");
+const rdBefore   = document.getElementById("rdBefore");
+const rdAfter    = document.getElementById("rdAfter");
+const rdLabel    = document.getElementById("rdLabel");
+const rdActions  = document.getElementById("rdActions");
+const rdDownload = document.getElementById("rdDownload");
+const rdClose    = document.getElementById("rdClose");
+
+let protectedUrl = null;
+
+function openStage(previewSrc) {
+    rdFrame.classList.remove("done");
+    rdActions.classList.remove("show");
+    rdLabel.classList.remove("ok");
+    rdLabel.innerHTML = 'Redacting<span class="dots">…</span>';
+    rdAfter.removeAttribute("src");
+
+    if (previewSrc) {
+        rdBefore.src = previewSrc;
+        rdFrame.classList.remove("nopreview");
+    } else {
+        rdBefore.removeAttribute("src");
+        rdFrame.classList.add("nopreview");
+    }
+    stage.classList.add("on");
+}
+
+function closeStage() {
+    stage.classList.remove("on");
+    if (protectedUrl) {
+        URL.revokeObjectURL(protectedUrl);
+        protectedUrl = null;
+    }
+}
+
+rdClose.addEventListener("click", closeStage);
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && stage.classList.contains("on")) closeStage();
+});
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+/* Redaction button */
+async function protectImage() {
+    const savedResult = sessionStorage.getItem("cybersnap_result");
+
+    if (!savedResult) {
+        alert("No scan results found. Please upload a screenshot again.");
+        return;
+    }
+
+    let result;
+    try {
+        result = JSON.parse(savedResult);
+    } catch (error) {
+        alert("Could not read the scan results. Please scan again.");
+        return;
+    }
+
+    if (!result.filename) {
+        alert("Screenshot filename is missing. Please upload the image again.");
+        return;
+    }
+
+    const button = document.querySelector(".protect");
+    const previewSrc = sessionStorage.getItem("cybersnap_preview")
+                    || result.preview || result.image_url || "";
+
+    try {
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Protecting...";
+        }
+
+        openStage(previewSrc);
+
+        const [response] = await Promise.all([
+            fetch("http://127.0.0.1:8000/redact/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/octet-stream"
+                },
+                body: JSON.stringify({ filename: result.filename })
+            }),
+            wait(1800)
+        ]);
+
+        if (!response.ok) {
+            let message = "Redaction failed.";
+            try {
+                const errorData = await response.json();
+                message = errorData.detail || message;
+            } catch (_) { /* keep default message */ }
+            throw new Error(message);
+        }
+
+        const blob = await response.blob();
+        if (protectedUrl) URL.revokeObjectURL(protectedUrl);
+        protectedUrl = URL.createObjectURL(blob);
+
+        rdAfter.src = protectedUrl;
+        try { await rdAfter.decode(); } catch (_) {}
+        rdFrame.classList.add("done");
+
+        rdLabel.classList.add("ok");
+        rdLabel.textContent = "✓ Sensitive data redacted";
+
+        rdDownload.href = protectedUrl;
+        rdDownload.download = "protected_" + result.filename;
+
+        await wait(900);
+        rdActions.classList.add("show");
+
+    } catch (error) {
+        closeStage();
+        alert("Error: " + error.message);
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = "Redact sensitive data";
+        }
+    }
+}
+</script>
+</body>
+</html>
