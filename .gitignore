@@ -1,0 +1,22 @@
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+
+# Environment variables
+.env
+.env.*
+
+# Django
+frontend/db.sqlite3
+*.log
+
+# IDE
+.vscode/
+
+# Uploaded and processed screenshots
+uploads/*
+processed/*
+!uploads/.gitkeep
+!processed/.gitkeep
