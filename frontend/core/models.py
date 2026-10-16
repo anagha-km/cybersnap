@@ -8,6 +8,14 @@ class ScanHistory(models.Model):
         on_delete=models.CASCADE
     )
     filename = models.CharField(max_length=255)
+
+    # Add this field
+    protected_filename = models.CharField(
+        max_length=255,
+        blank=True,
+        default=""
+    )
+
     extracted_text = models.TextField(blank=True)
     detected_data = models.JSONField(default=list, blank=True)
     scan_date = models.DateTimeField(auto_now_add=True)

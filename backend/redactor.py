@@ -165,8 +165,9 @@ def find_qr_boxes(image):
     return boxes
 
 
-def redact_image(image_path, output_path):
-    """Redact detected sensitive text and QR codes."""
+def redact_image(image_path, output_path, selected_categories=None):
+    """Redact only the selected sensitive categories and QR codes."""
+
     image = cv2.imread(image_path)
 
     if image is None:
@@ -175,21 +176,56 @@ def redact_image(image_path, output_path):
     height, width = image.shape[:2]
     words = extract_words(image_path)
 
+    # Detect all sensitive information, regardless of user selection.
     text = " ".join(word["text"] for word in words)
     detected = detect_sensitive_data(text)
 
+    # None preserves the previous behavior for older callers.
+    # An empty list means the user selected nothing.
+    if selected_categories is None:
+        selected = {
+            str(category).strip().lower().replace("-", "_").replace(" ", "_")
+            for category in detected
+        }
+        selected.add("otp")
+        selected.add("qr_code")
+    else:
+        selected = {
+            str(category).strip().lower().replace("-", "_").replace(" ", "_")
+            for category in selected_categories
+        }
+
+    # Support common names for QR-code categories.
+    qr_aliases = {"qr_code", "qr_codes", "qrcode", "qrcodes"}
+    mask_qr = bool(selected & qr_aliases)
+
+    # Collect values only from the categories selected for masking.
     sensitive_values = set()
 
-    for values in detected.values():
+    for category, values in detected.items():
+        normalized_category = (
+            str(category)
+            .strip()
+            .lower()
+            .replace("-", "_")
+            .replace(" ", "_")
+        )
+
+        if normalized_category not in selected:
+            continue
+
         if isinstance(values, list):
             for value in values:
                 if value:
                     sensitive_values.add(str(value))
+        elif values:
+            sensitive_values.add(str(values))
 
-    # Add OTP values found from labelled messages.
-    sensitive_values.update(find_otp_values(words))
+    # Include OTP values only when OTP masking is selected.
+    if "otp" in selected:
+        sensitive_values.update(find_otp_values(words))
 
-    # Find and redact all matching text occurrences.
+    # Find and redact occurrences of selected sensitive values.
     boxes = find_sensitive_boxes(words, sensitive_values)
 
     for x1, y1, x2, y2 in boxes:
@@ -202,65 +238,67 @@ def redact_image(image_path, output_path):
         y2 = min(height - 1, y2 + padding_y)
 
         cv2.rectangle(
-            image, (x1, y1), (x2, y2), (0, 0, 0), -1
-        )
-
-    # Redact detected QR codes.
-        # Redact detected QR codes
-   
-    # Redact detected QR codes
-    qr_detector = cv2.QRCodeDetector()
-
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    qr_images = [
-        image.copy(),
-        gray,
-        cv2.resize(
             image,
-            None,
-            fx=2,
-            fy=2,
-            interpolation=cv2.INTER_CUBIC
+            (x1, y1),
+            (x2, y2),
+            (0, 0, 0),
+            -1
         )
-    ]
 
-    for index, qr_image in enumerate(qr_images):
-        try:
-            found, points = qr_detector.detect(qr_image)
+    # Redact QR codes only when selected.
+    if mask_qr:
+        qr_detector = cv2.QRCodeDetector()
 
-            if found and points is not None:
-                points = points.reshape(-1, 2).astype("float32")
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-                # Enlarged-image coordinates must be scaled back.
-                if index == 2:
-                    points /= 2
+        qr_images = [
+            image.copy(),
+            gray,
+            cv2.resize(
+                image,
+                None,
+                fx=2,
+                fy=2,
+                interpolation=cv2.INTER_CUBIC
+            )
+        ]
 
-                x, y, w, h = cv2.boundingRect(
-                    points.astype("int32")
-                )
+        for index, qr_image in enumerate(qr_images):
+            try:
+                found, points = qr_detector.detect(qr_image)
 
-                padding = max(12, int(max(w, h) * 0.08))
+                if found and points is not None:
+                    points = points.reshape(-1, 2).astype("float32")
 
-                x1 = max(0, x - padding)
-                y1 = max(0, y - padding)
-                x2 = min(width, x + w + padding)
-                y2 = min(height, y + h + padding)
+                    # Convert enlarged-image coordinates to original size.
+                    if index == 2:
+                        points /= 2
 
-                cv2.rectangle(
-                    image,
-                    (x1, y1),
-                    (x2, y2),
-                    (0, 0, 0),
-                    -1
-                )
+                    x, y, w, h = cv2.boundingRect(
+                        points.astype("int32")
+                    )
 
-                break
+                    padding = max(12, int(max(w, h) * 0.08))
 
-        except cv2.error:
-            continue
+                    x1 = max(0, x - padding)
+                    y1 = max(0, y - padding)
+                    x2 = min(width, x + w + padding)
+                    y2 = min(height, y + h + padding)
 
-    # Save the protected screenshot
+                    cv2.rectangle(
+                        image,
+                        (x1, y1),
+                        (x2, y2),
+                        (0, 0, 0),
+                        -1
+                    )
+
+                    break
+
+            except cv2.error:
+                continue
+
+    # Save the protected screenshot.
     output_directory = os.path.dirname(output_path) or "."
     os.makedirs(output_directory, exist_ok=True)
 

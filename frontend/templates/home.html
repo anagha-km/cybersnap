@@ -1,251 +1,234 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CyberSnap — Screenshot Privacy Protection</title>
+
+<script>document.documentElement.classList.add('js');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  :root{
-    --bg:#0a0713; --card:#16102a; --card-border:rgba(168,124,255,0.16);
+:root {
+    --bg:#0a0713; --card:#16102a;
+    --card-border:rgba(168,124,255,.2);
     --text:#f3eefc; --text-dim:#a79bc4;
     --accent-1:#a855f7; --accent-2:#ec4899;
     --accent-grad:linear-gradient(135deg,var(--accent-1),var(--accent-2));
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:
-      radial-gradient(60% 50% at 78% 8%, rgba(168,85,247,0.20), transparent 60%),
-      radial-gradient(40% 40% at 10% 30%, rgba(236,72,153,0.10), transparent 60%),
-      var(--bg);
-    color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;
-  }
-  h1,h2,h3,.logo{font-family:'Sora',sans-serif;}
-  a{color:inherit;text-decoration:none;}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
-  :focus-visible{outline:2px solid var(--accent-1);outline-offset:3px;}
-
-  /* NAV */
-  nav{display:flex;align-items:center;justify-content:space-between;padding:26px 0;}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;}
-  .logo-mark{width:30px;height:30px;border-radius:9px;background:var(--accent-grad);
-    display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(168,85,247,0.55);}
-  .logo-mark svg{width:16px;height:16px;}
-  .nav-links{display:flex;gap:34px;font-size:14.5px;color:var(--text-dim);}
-  .nav-links a:hover{color:var(--text);}
-  .nav-cta{padding:11px 22px;border-radius:999px;font-size:14px;font-weight:600;border:none;cursor:pointer;
-    background:var(--accent-grad);color:#fff;box-shadow:0 0 22px rgba(168,85,247,0.4);font-family:inherit;}
-
-  /* HERO */
-  .hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:60px 0 90px;}
-  .badge{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:999px;
-    border:1px solid var(--card-border);background:rgba(168,85,247,0.08);
-    font-size:12.5px;color:var(--text-dim);margin-bottom:22px;}
-  .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 8px var(--accent-2);}
-  .hero h1{font-size:47px;line-height:1.12;font-weight:700;letter-spacing:-0.5px;margin-bottom:20px;}
-  .hero h1 span,.grad{background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .hero p{color:var(--text-dim);font-size:15.5px;line-height:1.65;max-width:440px;margin-bottom:30px;}
-  .hero-ctas{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
-  .btn-primary{padding:14px 26px;border-radius:999px;font-weight:600;font-size:14.5px;font-family:inherit;
-    background:var(--accent-grad);color:#fff;border:none;cursor:pointer;box-shadow:0 0 26px rgba(168,85,247,0.45);}
-  .btn-primary:disabled{opacity:.7;cursor:wait;}
-  .btn-ghost{padding:14px 22px;border-radius:999px;font-weight:600;font-size:14.5px;
-    color:var(--text);border:1px solid var(--card-border);background:rgba(255,255,255,0.02);}
-  .status{margin-top:14px;font-size:13.5px;color:var(--text-dim);min-height:20px;}
-  .status.err{color:#ff7a90;}
-
-  /* HERO VISUAL */
-  .hero-visual{position:relative;display:flex;justify-content:center;align-items:center;height:420px;}
-  .phone{width:210px;height:400px;border-radius:34px;background:linear-gradient(160deg,#1c1433,#120c22);
-    border:1px solid rgba(168,124,255,0.28);box-shadow:0 0 60px rgba(168,85,247,0.25),inset 0 0 40px rgba(168,85,247,0.06);
-    position:relative;overflow:hidden;transform:rotate(-4deg);}
-  .phone-screen{position:absolute;inset:14px;border-radius:24px;
-    background:linear-gradient(200deg,rgba(168,85,247,0.22),rgba(236,72,153,0.10));overflow:hidden;}
-  .redact-line{position:absolute;left:16px;height:9px;border-radius:4px;background:rgba(255,255,255,0.10);}
-  .redact-line.blur{background:var(--accent-grad);opacity:0.85;box-shadow:0 0 10px rgba(236,72,153,0.6);}
-  .scan-bar{position:absolute;left:0;right:0;height:2px;
-    background:linear-gradient(90deg,transparent,#fff,transparent);box-shadow:0 0 16px 3px rgba(236,72,153,0.8);
-    animation:scan 3.2s ease-in-out infinite;}
-  @keyframes scan{0%,100%{top:8%;opacity:0;}10%{opacity:1;}50%{top:88%;opacity:1;}60%{opacity:0;}}
-  .float-icon{position:absolute;width:52px;height:52px;border-radius:14px;background:var(--card);
-    border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;
-    box-shadow:0 0 24px rgba(168,85,247,0.35);animation:float 5s ease-in-out infinite;}
-  .float-icon svg{width:22px;height:22px;stroke:var(--accent-1);}
-  .fi-1{top:2%;left:-4%;} .fi-2{top:20%;right:-8%;animation-delay:.6s;}
-  .fi-3{bottom:24%;left:-10%;animation-delay:1.2s;} .fi-4{bottom:2%;right:-4%;animation-delay:1.8s;}
-  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
-  @media (prefers-reduced-motion:reduce){.scan-bar,.float-icon{animation:none;}html{scroll-behavior:auto;}}
-
-
-  /* SERVICES */
-  .services{padding:70px 0 100px;text-align:center;border-top:1px solid var(--card-border);scroll-margin-top:20px;}
-  .services h2{font-size:32px;margin-bottom:10px;}
-  .services > p{color:var(--text-dim);font-size:14.5px;max-width:500px;margin:0 auto 46px;line-height:1.6;}
-  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:left;}
-  .service-card{background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:26px 22px;
-    transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;}
-  .service-card:hover{transform:translateY(-6px);border-color:rgba(168,124,255,0.4);box-shadow:0 14px 40px rgba(168,85,247,0.18);}
-  .service-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-grad);
-    display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 0 20px rgba(168,85,247,0.4);}
-  .service-icon svg{width:20px;height:20px;stroke:#fff;}
-  .service-card h3{font-size:16px;margin-bottom:8px;}
-  .service-card p{font-size:13.5px;color:var(--text-dim);line-height:1.6;}
-
-  /* SCAN OVERLAY */
-  .overlay{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:24px;
-    background:rgba(10,7,19,0.88);backdrop-filter:blur(6px);}
-  .overlay.show{display:flex;}
-  .scan-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--card-border);border-radius:22px;
-    padding:22px;text-align:center;box-shadow:0 0 60px rgba(168,85,247,0.3);}
-  .preview-wrap{display:flex;justify-content:center;}
-  .preview-wrap{display:flex;justify-content:center;}
-  .preview{position:relative;display:inline-block;line-height:0;border-radius:12px;overflow:hidden;
-    border:1px solid rgba(168,124,255,0.4);box-shadow:0 0 30px rgba(168,85,247,0.35);animation:glow 2s ease-in-out infinite;}
-  .preview img{display:block;max-width:100%;max-height:300px;width:auto;height:auto;}
-  .preview::after{content:'';position:absolute;inset:0;pointer-events:none;
-    background:
-      linear-gradient(rgba(168,85,247,0.10) 1px,transparent 1px) 0 0/100% 22px,
-      linear-gradient(90deg,rgba(168,85,247,0.10) 1px,transparent 1px) 0 0/22px 100%;}
-  .sweep{position:absolute;left:0;right:0;top:0;height:2px;z-index:2;
-    background:linear-gradient(90deg,transparent,#fff,transparent);box-shadow:0 0 14px 3px rgba(236,72,153,0.85);
-    animation:sweep 2.2s ease-in-out infinite alternate;}
-  .sweep::before{content:'';position:absolute;left:0;right:0;bottom:100%;height:70px;
-    background:linear-gradient(to top,rgba(236,72,153,0.28),transparent);}
-  @keyframes sweep{from{top:0;}to{top:calc(100% - 2px);}}
-  @keyframes glow{0%,100%{box-shadow:0 0 22px rgba(168,85,247,0.30);}50%{box-shadow:0 0 42px rgba(236,72,153,0.55);}}
-  .corner{position:absolute;width:18px;height:18px;z-index:3;border:2px solid var(--accent-2);}
-  .c1{top:6px;left:6px;border-right:0;border-bottom:0;border-top-left-radius:6px;}
-  .c2{top:6px;right:6px;border-left:0;border-bottom:0;border-top-right-radius:6px;}
-  .c3{bottom:6px;left:6px;border-right:0;border-top:0;border-bottom-left-radius:6px;}
-  .c4{bottom:6px;right:6px;border-left:0;border-top:0;border-bottom-right-radius:6px;}
-  .scan-title{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:20px;font-weight:600;font-size:16px;font-family:'Sora',sans-serif;}
-  .spinner{width:20px;height:20px;border-radius:50%;border:3px solid rgba(168,85,247,0.25);border-top-color:var(--accent-2);
-    animation:spin .8s linear infinite;flex:none;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .scan-sub{color:var(--text-dim);font-size:13.5px;margin-top:8px;}
-  .scan-name{color:var(--text-dim);font-size:12.5px;margin-top:14px;word-break:break-all;}
-  @media (prefers-reduced-motion:reduce){.spinner{animation-duration:2s;}.sweep{animation:none;top:0;height:100%;opacity:.4;}.preview img{animation:none;}}
-
-  footer{border-top:1px solid var(--card-border);padding:28px 0;text-align:center;color:var(--text-dim);font-size:13px;}
-
-  @media (max-width:900px){
-    .hero{grid-template-columns:1fr;}
-    .hero-visual{order:-1;height:340px;}
-    .hero h1{font-size:36px;}
-  }
-  @media (max-width:900px){.service-grid{grid-template-columns:1fr 1fr;}}
-  @media (max-width:560px){.nav-links{display:none;}.service-grid{grid-template-columns:1fr;}}
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+    background:radial-gradient(60% 50% at 78% 8%,rgba(168,85,247,.20),transparent 60%),
+    radial-gradient(40% 40% at 10% 30%,rgba(236,72,153,.10),transparent 60%),var(--bg);
+    color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden
+}
+h1,h2,h3,.logo{font-family:'Sora',sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+:focus-visible{outline:2px solid var(--accent-1);outline-offset:3px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 0}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;white-space:nowrap}
+.logo-mark{width:30px;height:30px;border-radius:9px;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(168,85,247,.55)}
+.logo-mark svg{width:16px;height:16px}
+.nav-links{display:flex;align-items:center;flex-wrap:wrap;gap:20px;font-size:14px;color:var(--text-dim)}
+.nav-links a:hover{color:var(--text)}
+.nav-cta,.btn-primary{padding:13px 23px;border-radius:999px;font-weight:600;font-size:14px;font-family:inherit;background:var(--accent-grad);color:#fff;border:none;cursor:pointer;box-shadow:0 0 24px rgba(168,85,247,.35)}
+button:disabled{opacity:.65;cursor:wait}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:60px 0 70px}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:999px;border:1px solid var(--card-border);background:rgba(168,85,247,.08);font-size:12.5px;color:var(--text-dim);margin-bottom:22px}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 8px var(--accent-2)}
+.hero h1{font-size:clamp(32px,4vw,47px);line-height:1.12;font-weight:700;margin-bottom:20px}
+.hero h1 span,.grad{background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--text-dim);font-size:15.5px;line-height:1.7;max-width:460px;margin-bottom:28px}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.status{margin-top:14px;font-size:13.5px;color:var(--text-dim);min-height:20px;line-height:1.5}
+.status.err{color:#ff8298}.status.success{color:#86efac}
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center;height:400px}
+.phone{width:210px;height:370px;border-radius:34px;background:linear-gradient(160deg,#1c1433,#120c22);border:1px solid rgba(168,124,255,.28);box-shadow:0 0 60px rgba(168,85,247,.25),inset 0 0 40px rgba(168,85,247,.06);position:relative;overflow:hidden;transform:rotate(-4deg)}
+.phone-screen{position:absolute;inset:14px;border-radius:24px;background:linear-gradient(200deg,rgba(168,85,247,.22),rgba(236,72,153,.10));overflow:hidden}
+.redact-line{position:absolute;left:16px;height:9px;border-radius:4px;background:rgba(255,255,255,.10)}
+.redact-line.blur{background:var(--accent-grad);opacity:.85;box-shadow:0 0 10px rgba(236,72,153,.6)}
+.scan-bar{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#fff,transparent);box-shadow:0 0 16px 3px rgba(236,72,153,.8);animation:scan 3.2s ease-in-out infinite}
+@keyframes scan{0%,100%{top:8%;opacity:0}10%{opacity:1}50%{top:88%;opacity:1}60%{opacity:0}}
+.float-icon{position:absolute;width:52px;height:52px;border-radius:14px;background:var(--card);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(168,85,247,.35);animation:float 5s ease-in-out infinite}
+.float-icon svg{width:22px;height:22px;stroke:var(--accent-1)}
+.fi-1{top:2%;left:0}.fi-2{top:20%;right:0;animation-delay:.6s}.fi-3{bottom:24%;left:0;animation-delay:1.2s}.fi-4{bottom:2%;right:0;animation-delay:1.8s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.results-section{display:none;padding:25px 0 70px;scroll-margin-top:20px}
+.results-section.show{display:block}
+.results-heading{margin-bottom:22px}
+.results-heading h2{font-size:29px;margin-bottom:8px}
+.results-heading p{color:var(--text-dim);line-height:1.6}
+.results-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.result-card{min-width:0;padding:22px;border-radius:17px;border:1px solid var(--card-border);background:rgba(22,16,42,.92)}
+.result-card h3{font-size:16px;margin-bottom:15px}
+.result-value{color:var(--text-dim);font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.result-file{display:flex;gap:12px;align-items:center}
+.file-symbol{width:43px;height:43px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(168,85,247,.16);font-size:21px}
+.result-list{list-style:none;display:grid;gap:10px}
+.result-list li{padding:11px 12px;background:rgba(168,85,247,.08);border:1px solid rgba(168,124,255,.12);border-radius:9px;color:#e8ddfa;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.empty-result{color:#b8a9d1;font-size:13.5px;line-height:1.6}
+.text-output{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;max-height:320px;overflow:auto;color:#d3c6e9;font-family:'Inter',sans-serif;font-size:13px;line-height:1.7}
+.results-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.btn-secondary{display:inline-block;padding:12px 20px;border:1px solid var(--card-border);background:rgba(168,85,247,.08);border-radius:999px;color:var(--text);cursor:pointer;font-family:inherit;font-size:13px}
+.protected-image{display:block;max-width:100%;max-height:400px;object-fit:contain;border-radius:12px;border:1px solid var(--card-border);margin-top:12px}
+.services{padding:70px 0 90px;text-align:center;border-top:1px solid var(--card-border);scroll-margin-top:20px}
+.services h2{font-size:32px;margin-bottom:10px}
+.services>p{color:var(--text-dim);font-size:14.5px;max-width:500px;margin:0 auto 40px;line-height:1.6}
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:left}
+.service-card{background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:25px 22px;transition:transform .25s ease,box-shadow .25s ease}
+.service-card:hover{transform:translateY(-5px);box-shadow:0 14px 35px rgba(168,85,247,.15)}
+.service-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.service-card h3{font-size:16px;margin-bottom:8px}
+.service-card p{font-size:13.5px;color:var(--text-dim);line-height:1.6}
+.js .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s ease var(--d,0s),transform .8s cubic-bezier(.2,.7,.2,1) var(--d,0s);will-change:opacity,transform}
+.js .reveal.visible{opacity:1;transform:translateY(0)}
+.js .service-card.reveal.visible{transition:opacity .8s ease var(--d,0s),transform .25s ease,box-shadow .25s ease}
+.js .service-card.reveal.visible:hover{transform:translateY(-5px)}
+footer{border-top:1px solid var(--card-border);padding:28px 0;text-align:center;color:var(--text-dim);font-size:13px}
+.overlay{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(10,7,19,.88);backdrop-filter:blur(6px)}
+.overlay.show{display:flex}
+.scan-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--card-border);border-radius:22px;padding:22px;text-align:center;box-shadow:0 0 60px rgba(168,85,247,.3)}
+.preview-wrap{display:flex;justify-content:center}
+.preview{position:relative;display:inline-block;max-width:100%;line-height:0;border-radius:12px;overflow:hidden;border:1px solid rgba(168,124,255,.4);animation:glow 2s ease-in-out infinite}
+.preview img{display:block;max-width:100%;max-height:300px;width:auto;height:auto}
+.preview::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(168,85,247,.10) 1px,transparent 1px) 0 0/100% 22px,linear-gradient(90deg,rgba(168,85,247,.10) 1px,transparent 1px) 0 0/22px 100%}
+.sweep{position:absolute;left:0;right:0;top:0;height:2px;z-index:2;background:linear-gradient(90deg,transparent,#fff,transparent);box-shadow:0 0 14px 3px rgba(236,72,153,.85);animation:sweep 2.2s ease-in-out infinite alternate}
+@keyframes sweep{from{top:0}to{top:calc(100% - 2px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 22px rgba(168,85,247,.30)}50%{box-shadow:0 0 42px rgba(236,72,153,.55)}}
+.corner{position:absolute;width:18px;height:18px;z-index:3;border:2px solid var(--accent-2)}
+.c1{top:6px;left:6px;border-right:0;border-bottom:0}.c2{top:6px;right:6px;border-left:0;border-bottom:0}.c3{bottom:6px;left:6px;border-right:0;border-top:0}.c4{bottom:6px;right:6px;border-left:0;border-top:0}
+.scan-title{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:20px;font-weight:600;font-size:16px;font-family:'Sora',sans-serif}
+.spinner{width:20px;height:20px;border-radius:50%;border:3px solid rgba(168,85,247,.25);border-top-color:var(--accent-2);animation:spin .8s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan-sub{color:var(--text-dim);font-size:13.5px;margin-top:8px}
+.scan-name{color:var(--text-dim);font-size:12.5px;margin-top:14px;overflow-wrap:anywhere}
+@media(max-width:900px){.hero{grid-template-columns:1fr;gap:15px}.hero-visual{order:-1;height:310px}.phone{height:290px}.service-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){nav{flex-wrap:wrap}.nav-links{gap:13px;font-size:12px}.nav-cta{padding:10px 14px}.results-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.wrap{padding:0 20px}.hero h1{font-size:32px}.service-grid{grid-template-columns:1fr}.hero-visual{height:280px}.phone{width:175px;height:260px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important}.js .reveal{opacity:1;transform:none;transition:none}}
 </style>
 </head>
+
 <body>
-
 <div class="wrap">
-  <nav>
+
+<form id="csrfForm" hidden>{% csrf_token %}</form>
+
+<nav>
     <a class="logo" href="{% url 'home' %}">
-      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></div>
-      CyberSnap
+        <div class="logo-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                <path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/>
+            </svg>
+        </div>
+        CyberSnap
     </a>
-   <div class="nav-links">
-  <a href="{% url 'home' %}">Home</a>
-  <a href="#services">Services</a>
+    <div class="nav-links">
+        <a href="{% url 'home' %}">Home</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'results' %}">Results</a>
+        <a href="{% url 'history' %}">History</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+        {% endif %}
+    </div>
+    <button type="button" class="nav-cta" onclick="document.getElementById('fileInput').click()">Get Started</button>
+</nav>
 
-  {% if user.is_authenticated %}
-    <a href="{% url 'profile' %}">Profile</a>
-    <a href="{% url 'logout' %}">Logout</a>
-  {% endif %}
-</div>
-
-<button type="button" class="nav-cta"
-        onclick="document.getElementById('fileInput').click()">
-    Get Started
-</button>
-  </nav>
-
-  <section class="hero" id="home">
+<section class="hero" id="home">
     <div>
-      <div class="badge">Your trusted screenshot privacy layer</div>
-      <h1>Protecting your <br>screenshots, <span>privately</span></h1>
-      <p>Upload a screenshot and CyberSnap scans it for sensitive information — passwords, IDs, tokens, personal data — before you ever hit share.</p>
-      <div class="hero-ctas">
-        <input type="file" id="fileInput" accept="image/*" hidden>
-        <button type="button" class="btn-primary" id="uploadBtn" onclick="document.getElementById('fileInput').click()">Upload a Screenshot</button>
-      </div>
-      <div class="status" id="status" role="status" aria-live="polite"></div>
+        <div class="badge">Your trusted screenshot privacy layer</div>
+        <h1>Protecting your <br>screenshots, <span>privately</span></h1>
+        <p>Upload a screenshot and CyberSnap scans it for sensitive information — passwords, IDs, tokens and personal data — before you share it.</p>
+        <div class="hero-ctas">
+            <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/bmp" multiple hidden>
+            <button type="button" class="btn-primary" id="uploadBtn" onclick="document.getElementById('fileInput').click()">Upload a Screenshot</button>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
     </div>
 
     <div class="hero-visual">
-      <div class="phone">
-        <div class="phone-screen">
-          <div class="scan-bar"></div>
-          <div class="redact-line" style="top:16%;width:60%;"></div>
-          <div class="redact-line blur" style="top:28%;width:80%;"></div>
-          <div class="redact-line" style="top:40%;width:45%;"></div>
-          <div class="redact-line blur" style="top:52%;width:70%;"></div>
-          <div class="redact-line" style="top:64%;width:55%;"></div>
-          <div class="redact-line blur" style="top:76%;width:65%;"></div>
-        </div>
-      </div>
-      <div class="float-icon fi-1"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></div>
-      <div class="float-icon fi-2"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.5 5.5A9.4 9.4 0 0 1 12 5c5 0 8.5 4 9.5 7-0.4 1-1 2-1.8 3M6.6 6.6C4.5 8 3 10 2.5 12c1 3 4.5 7 9.5 7 1.3 0 2.6-.3 3.7-.8"/></svg></div>
-      <div class="float-icon fi-3"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
-      <div class="float-icon fi-4"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="phone"><div class="phone-screen">
+            <div class="scan-bar"></div>
+            <div class="redact-line" style="top:16%;width:60%;"></div>
+            <div class="redact-line blur" style="top:28%;width:80%;"></div>
+            <div class="redact-line" style="top:40%;width:45%;"></div>
+            <div class="redact-line blur" style="top:52%;width:70%;"></div>
+            <div class="redact-line" style="top:64%;width:55%;"></div>
+            <div class="redact-line blur" style="top:76%;width:65%;"></div>
+        </div></div>
+        <div class="float-icon fi-1">◆</div>
+        <div class="float-icon fi-2">◉</div>
+        <div class="float-icon fi-3">▣</div>
+        <div class="float-icon fi-4">✓</div>
     </div>
-  </section>
+</section>
 
-  <section class="services" id="services">
-    <h2>Our <span class="grad">services</span></h2>
-    <p>Everything CyberSnap does to keep your screenshots safe before you share them.</p>
-    <div class="service-grid">
-      <div class="service-card">
-        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
-        <h3>Sensitive data scan</h3>
-        <p>Reads your screenshot with OCR and finds passwords, OTPs, emails, phone numbers, API keys and QR codes.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <h3>Privacy risk score</h3>
-        <p>Rates how risky a screenshot is, so you know whether it is safe to share.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.5 5.5A9.4 9.4 0 0 1 12 5c5 0 8.5 4 9.5 7-0.4 1-1 2-1.8 3M6.6 6.6C4.5 8 3 10 2.5 12c1 3 4.5 7 9.5 7 1.3 0 2.6-.3 3.7-.8"/></svg></div>
-        <h3>Automatic redaction</h3>
-        <p>Hides the sensitive areas by blurring or blacking them out, with no manual cropping.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg></div>
-        <h3>Protected download</h3>
-        <p>Download a cleaned copy of your screenshot, ready to share safely.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div>
-        <h3>Scan history</h3>
-        <p>Keeps your previous scans and privacy reports so you can look back at them.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M7 16V9m5 7V5m5 11v-5"/></svg></div>
-        <h3>Privacy report</h3>
-        <p>Explains what was found, how risky it is, and what to do before sharing.</p>
-      </div>
+<section class="results-section" id="homeResults" aria-live="polite">
+    <div class="results-heading">
+        <h2 id="resultsTitle">Scan <span class="grad">Results</span></h2>
+        <p id="resultsSubtitle">Your screenshot analysis is complete. Review the findings below.</p>
     </div>
-  </section>
+    <div class="results-grid">
+        <div class="result-card">
+            <h3>Screenshot details</h3>
+            <div class="result-file">
+                <div class="file-symbol">▧</div>
+                <div>
+                    <div id="resultFilename" class="result-value">—</div>
+                    <div class="result-value" id="resultDate"></div>
+                </div>
+            </div>
+        </div>
+        <div class="result-card">
+            <h3>Detected sensitive data</h3>
+            <ul class="result-list" id="detectedList"></ul>
+            <p class="empty-result" id="noDetected" hidden>No sensitive data was detected by the scanner.</p>
+        </div>
+        <div class="result-card" style="grid-column:1/-1;">
+            <h3>Extracted text</h3>
+            <pre class="text-output" id="extractedText">No text extracted yet.</pre>
+        </div>
+    </div>
+    <div class="results-actions">
+        <button class="btn-secondary" type="button" id="scanAnotherBtn">Scan another screenshot</button>
+        <button class="btn-primary" type="button" id="viewReportBtn">View Full Report</button>
+        <a class="btn-secondary" href="{% url 'history' %}">View History</a>
+    </div>
+</section>
+
+<section class="services" id="services">
+    <h2 class="reveal">Our <span class="grad">services</span></h2>
+    <p class="reveal" style="--d:.1s">Tools to help you check screenshots before sharing them.</p>
+    <div class="service-grid">
+        <div class="service-card reveal" style="--d:.15s"><div class="service-icon">⌕</div><h3>Sensitive data scan</h3><p>Uses OCR and detection rules to look for emails, phone numbers, OTPs and other sensitive information.</p></div>
+        <div class="service-card reveal" style="--d:.3s"><div class="service-icon">✓</div><h3>Privacy risk assessment</h3><p>Review scan findings and understand potential privacy concerns before sharing a screenshot.</p></div>
+        <div class="service-card reveal" style="--d:.45s"><div class="service-icon">◉</div><h3>Privacy protection</h3><p>Review sensitive areas and use available protection features before sharing your screenshot.</p></div>
+        <div class="service-card reveal" style="--d:.15s"><div class="service-icon">↓</div><h3>Protected download</h3><p>Download the protected version of a scanned screenshot.</p></div>
+        <div class="service-card reveal" style="--d:.3s"><div class="service-icon">◷</div><h3>Scan history</h3><p>Open History to review scans that have been saved to your account.</p></div>
+        <div class="service-card reveal" style="--d:.45s"><div class="service-icon">▤</div><h3>Privacy report</h3><p>View scan findings and extracted text in the full report.</p></div>
+    </div>
+</section>
 </div>
 
-
 <div class="overlay" id="scanOverlay" role="dialog" aria-modal="true" aria-label="Scanning screenshot">
-  <div class="scan-card">
-    <div class="preview-wrap">
-      <div class="preview">
-        <img id="previewImg" alt="Screenshot being scanned">
-        <div class="sweep"></div>
-        <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
-      </div>
+    <div class="scan-card">
+        <div class="preview-wrap">
+            <div class="preview">
+                <img id="previewImg" alt="Preview of screenshot being scanned">
+                <div class="sweep"></div>
+                <span class="corner c1"></span><span class="corner c2"></span>
+                <span class="corner c3"></span><span class="corner c4"></span>
+            </div>
+        </div>
+        <div class="scan-title"><div class="spinner" id="scanSpinner"></div><span id="scanText">Scanning your screenshot...</span></div>
+        <div class="scan-sub" id="scanSub">Reading text and looking for sensitive data</div>
+        <div class="scan-name" id="scanName"></div>
     </div>
-    <div class="scan-title"><div class="spinner"></div><span id="scanText">Scanning your screenshot...</span></div>
-    <div class="scan-sub" id="scanSub">Reading text and looking for sensitive data</div>
-    <div class="scan-name" id="scanName"></div>
-  </div>
 </div>
 
 <footer>© 2026 CyberSnap. All rights reserved.</footer>
@@ -253,71 +236,333 @@
 <script>
 const fileInput = document.getElementById("fileInput");
 const uploadBtn = document.getElementById("uploadBtn");
-const statusEl  = document.getElementById("status");
-const overlay   = document.getElementById("scanOverlay");
+const statusEl = document.getElementById("status");
+const overlay = document.getElementById("scanOverlay");
 const previewImg = document.getElementById("previewImg");
-const scanSub   = document.getElementById("scanSub");
+const scanSub = document.getElementById("scanSub");
 
-function setStatus(msg, isError){
-  statusEl.textContent = msg;
-  statusEl.className = "status" + (isError ? " err" : "");
+let previewUrl = null;
+let scanTimer = null;
+
+(function () {
+    const items = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) {
+        items.forEach(el => el.classList.add("visible"));
+        return;
+    }
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                obs.unobserve(entry.target);
+            }
+        });
+    }, {threshold:0.15,rootMargin:"0px 0px -60px 0px"});
+    items.forEach(el => observer.observe(el));
+})();
+
+function setStatus(message, type = "") {
+    statusEl.textContent = message;
+    statusEl.className = "status" + (type ? " " + type : "");
 }
 
-// Messages shown one after another while the server works
 const stages = [
-  "Reading text and looking for sensitive data",
-  "Checking for passwords, OTPs and API keys",
-  "Calculating your privacy risk",
+    "Reading text and looking for sensitive data",
+    "Checking for passwords, OTPs and API keys",
+    "Reviewing extracted information"
 ];
 
-function showOverlay(file){
-  previewImg.src = URL.createObjectURL(file);
-  document.getElementById("scanName").textContent = file.name;
-  overlay.classList.add("show");
-  let i = 0;
-  scanSub.textContent = stages[0];
-  return setInterval(() => { i = (i + 1) % stages.length; scanSub.textContent = stages[i]; }, 2200);
+function showOverlay(file) {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = URL.createObjectURL(file);
+    previewImg.src = previewUrl;
+    document.getElementById("scanName").textContent = file.name;
+    document.getElementById("scanText").textContent = "Scanning your screenshot...";
+    document.getElementById("scanSpinner").style.display = "block";
+    overlay.classList.add("show");
+    let index = 0;
+    scanSub.textContent = stages[0];
+    if (scanTimer) clearInterval(scanTimer);
+    scanTimer = setInterval(() => {
+        index = (index + 1) % stages.length;
+        scanSub.textContent = stages[index];
+    }, 2200);
 }
 
-function hideOverlay(timer){
-  clearInterval(timer);
-  overlay.classList.remove("show");
-  if (previewImg.src) URL.revokeObjectURL(previewImg.src);
-  previewImg.removeAttribute("src");
+function hideOverlay() {
+    if (scanTimer) {
+        clearInterval(scanTimer);
+        scanTimer = null;
+    }
+    overlay.classList.remove("show");
+    if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        previewUrl = null;
+    }
+    previewImg.removeAttribute("src");
+}
+
+function displayListValue(item) {
+    if (typeof item === "string") return item;
+    if (item === null || item === undefined) return "";
+    if (typeof item === "object") {
+        const type = item.type || item.label || item.category || "Finding";
+        const value = item.value || item.text || item.match || "";
+        return value ? `${type}: ${value}` : JSON.stringify(item);
+    }
+    return String(item);
+}
+
+function getDetectedData(result) {
+    const possible = [
+        result.detected_sensitive_data,
+        result.detected_data,
+        result.sensitive_data,
+        result.detections
+    ];
+    for (const value of possible) {
+        if (Array.isArray(value)) return value;
+        if (value && typeof value === "object") {
+            return Object.entries(value).map(([key, item]) => {
+                const formatted = displayListValue(item);
+                return formatted ? `${key}: ${formatted}` : key;
+            });
+        }
+    }
+    return [];
+}
+
+async function saveScanToDjango(result, fallbackFilename) {
+    const csrfInput = document.querySelector(
+        '#csrfForm [name="csrfmiddlewaretoken"]'
+    );
+    if (!csrfInput) throw new Error("Django CSRF token is missing.");
+
+    const saveForm = new FormData();
+    saveForm.append("filename", result.filename || fallbackFilename);
+    saveForm.append("protected_filename", result.protected_filename || "");
+    saveForm.append("extracted_text", result.extracted_text || result.extractedText || "");
+    saveForm.append("detected_data", JSON.stringify(getDetectedData(result)));
+
+    const response = await fetch("{% url 'results' %}", {
+        method: "POST",
+        headers: {"X-CSRFToken": csrfInput.value},
+        body: saveForm,
+        credentials: "same-origin"
+    });
+
+    if (!response.ok) {
+        throw new Error("Django could not save the scan (HTTP " + response.status + ").");
+    }
+    return true;
+}
+
+function showProtectedImage(card, protectedFilename, originalFilename) {
+    if (!protectedFilename) {
+        const note = document.createElement("p");
+        note.className = "result-value";
+        note.textContent = "Protected image filename was not returned by the scanner.";
+        card.appendChild(note);
+        return;
+    }
+
+    const heading = document.createElement("h3");
+    heading.style.marginTop = "18px";
+    heading.textContent = "Protected Screenshot";
+    card.appendChild(heading);
+
+    const imageUrl = "http://127.0.0.1:8000/protected/" +
+        encodeURIComponent(protectedFilename);
+
+    const image = document.createElement("img");
+    image.className = "protected-image";
+    image.src = imageUrl;
+    image.alt = "Protected version of " + originalFilename;
+    image.loading = "lazy";
+
+    image.addEventListener("error", () => {
+        const message = document.createElement("p");
+        message.className = "result-value";
+        message.textContent = "Unable to load protected image. Check that FastAPI is running and the filename exists.";
+        image.replaceWith(message);
+    }, {once: true});
+
+    card.appendChild(image);
+
+    const download = document.createElement("a");
+    download.className = "btn-secondary";
+    download.style.marginTop = "12px";
+    download.href = imageUrl;
+    download.download = protectedFilename;
+    download.textContent = "Download Protected Screenshot";
+    card.appendChild(download);
+}
+
+function showBatchResults(results) {
+    const section = document.getElementById("homeResults");
+    const heading = section.querySelector(".results-heading");
+    const grid = section.querySelector(".results-grid");
+
+    document.getElementById("resultsTitle").textContent = "Batch Scan Results";
+    heading.querySelector("p").textContent = `${results.length} screenshot(s) processed.`;
+    grid.replaceChildren();
+
+    const successful = results.filter(item => item.success).length;
+    const withFindings = results.filter(item => item.success && item.detected_data.length > 0).length;
+
+    const summary = document.createElement("div");
+    summary.className = "result-card";
+    summary.style.gridColumn = "1 / -1";
+
+    const summaryTitle = document.createElement("h3");
+    summaryTitle.textContent = "Batch Summary";
+    summary.appendChild(summaryTitle);
+
+    [
+        `Total screenshots: ${results.length}`,
+        `Scanned successfully: ${successful}`,
+        `With findings: ${withFindings}`,
+        `Failed: ${results.length - successful}`
+    ].forEach(message => {
+        const p = document.createElement("p");
+        p.className = "result-value";
+        p.textContent = message;
+        summary.appendChild(p);
+    });
+    grid.appendChild(summary);
+
+    results.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "result-card";
+
+        const title = document.createElement("h3");
+        title.textContent = `${index + 1}. ${item.filename}`;
+        card.appendChild(title);
+
+        const status = document.createElement("p");
+        status.className = "result-value";
+        status.textContent = !item.success
+            ? `Scan failed: ${item.error || "Unknown error"}`
+            : item.detected_data.length
+                ? "Sensitive data detected — review before sharing."
+                : "No sensitive data detected by the scanner.";
+        card.appendChild(status);
+
+        if (item.detected_data.length) {
+            const list = document.createElement("ul");
+            list.className = "result-list";
+            item.detected_data.forEach(finding => {
+                const li = document.createElement("li");
+                li.textContent = displayListValue(finding);
+                list.appendChild(li);
+            });
+            card.appendChild(list);
+        }
+
+        const textTitle = document.createElement("h3");
+        textTitle.style.marginTop = "16px";
+        textTitle.textContent = "Extracted Text";
+        card.appendChild(textTitle);
+
+        const text = document.createElement("pre");
+        text.className = "text-output";
+        text.textContent = item.extracted_text || "No text extracted.";
+        card.appendChild(text);
+
+        if (item.success) {
+            showProtectedImage(card, item.protected_filename, item.filename);
+        }
+        grid.appendChild(card);
+    });
+
+    section.classList.add("show");
+    section.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 fileInput.addEventListener("change", async function () {
-  const file = this.files[0];
-  if (!file) return;
+    const files = Array.from(this.files);
+    if (!files.length) return;
 
-  if (!file.type.startsWith("image/")) {
-    setStatus("Please choose an image file (PNG, JPG or WebP).", true);
-    this.value = "";
-    return;
-  }
+    const invalidFile = files.find(file => !file.type.startsWith("image/"));
+    if (invalidFile) {
+        setStatus("Please select only image files.", "err");
+        this.value = "";
+        return;
+    }
 
-  setStatus("");
-  uploadBtn.disabled = true;
-  const timer = showOverlay(file);
+    uploadBtn.disabled = true;
+    const batchResults = [];
+    let failedCount = 0;
 
-  const formData = new FormData();
-  formData.append("file", file);
+    try {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            setStatus(`Scanning ${i + 1} of ${files.length}: ${file.name}`);
+            showOverlay(file);
 
-  try {
-    const response = await fetch("http://127.0.0.1:8000/upload/", { method: "POST", body: formData });
-    if (!response.ok) throw new Error("Server returned " + response.status);
+            try {
+                const formData = new FormData();
+                formData.append("file", file);
 
-    const result = await response.json();
-    sessionStorage.setItem("cybersnap_result", JSON.stringify(result));
-    scanSub.textContent = "Done. Opening your results...";
+                const response = await fetch("http://127.0.0.1:8000/upload/", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Scanner returned HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                await saveScanToDjango(result, file.name);
+
+                batchResults.push({
+                    filename: result.filename || file.name,
+                    protected_filename: result.protected_filename || "",
+                    extracted_text: result.extracted_text || result.extractedText || "",
+                    detected_data: getDetectedData(result),
+                    success: true
+                });
+            } catch (error) {
+                console.error("Scan failed:", file.name, error);
+                batchResults.push({
+                    filename: file.name,
+                    protected_filename: "",
+                    extracted_text: "",
+                    detected_data: [],
+                    success: false,
+                    error: error.message
+                });
+                failedCount++;
+            } finally {
+                hideOverlay();
+            }
+        }
+
+        sessionStorage.setItem("cybersnap_batch_results", JSON.stringify(batchResults));
+        showBatchResults(batchResults);
+
+        setStatus(
+            failedCount === 0
+                ? `All ${files.length} screenshots scanned and saved to History.`
+                : `${files.length - failedCount} succeeded; ${failedCount} failed.`,
+            failedCount === 0 ? "success" : "err"
+        );
+    } finally {
+        hideOverlay();
+        uploadBtn.disabled = false;
+        fileInput.value = "";
+    }
+});
+
+document.getElementById("scanAnotherBtn").addEventListener("click", () => {
+    document.getElementById("homeResults").classList.remove("show");
+    setStatus("");
+    fileInput.click();
+});
+
+document.getElementById("viewReportBtn").addEventListener("click", () => {
     window.location.href = "{% url 'results' %}";
-  } catch (error) {
-    console.error(error);
-    hideOverlay(timer);
-    setStatus("Could not reach the CyberSnap scanner. Make sure the FastAPI server is running on port 8000.", true);
-    uploadBtn.disabled = false;
-    fileInput.value = "";
-  }
 });
 </script>
 </body>

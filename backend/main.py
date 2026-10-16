@@ -1,8 +1,7 @@
-
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pathlib import Path
 import shutil
 import uuid
@@ -42,6 +41,7 @@ app.add_middleware(
 # Redaction request model
 class RedactRequest(BaseModel):
     filename: str
+    selected_categories: list[str] = Field(default_factory=list)
 
 
 # Check API status
@@ -50,7 +50,7 @@ def home():
     return {"message": "CyberSnap API is running"}
 
 
-# Upload and analyse screenshot
+# Upload, analyse, and automatically mask screenshot
 @app.post("/upload/")
 async def upload_screenshot(file: UploadFile = File(...)):
 
@@ -77,8 +77,11 @@ async def upload_screenshot(file: UploadFile = File(...)):
     filename = f"{uuid.uuid4().hex}{extension}"
     file_path = UPLOAD_FOLDER / filename
 
+    protected_filename = f"protected_{filename}"
+    protected_path = PROCESSED_FOLDER / protected_filename
+
     try:
-        # Save uploaded image
+        # Save original uploaded image
         with file_path.open("wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
@@ -96,31 +99,94 @@ async def upload_screenshot(file: UploadFile = File(...)):
                 qr_data if qr_data else ["QR code detected"]
             )
 
+        # Automatically mask detected sensitive information
+        # and QR codes using the existing redactor.
+        redact_image(
+            str(file_path),
+            str(protected_path),
+            selected_categories=None
+        )
+
+        if not protected_path.is_file():
+            raise ValueError("Protected image was not created.")
+
         return {
-            "message": "Screenshot uploaded successfully",
+            "message": "Screenshot uploaded, analysed, and masked successfully",
             "filename": filename,
+            "protected_filename": protected_filename,
+            "protected_image_url": f"/protected/{protected_filename}",
             "extracted_text": text,
             "detected_sensitive_data": detected_data,
         }
 
+    except HTTPException:
+        raise
+
     except Exception as error:
+        # Remove incomplete files if processing fails
         if file_path.exists():
             file_path.unlink()
 
+        if protected_path.exists():
+            protected_path.unlink()
+
         raise HTTPException(
             status_code=500,
-            detail=f"Screenshot analysis failed: {error}"
+            detail=f"Screenshot analysis or masking failed: {error}"
         )
 
     finally:
         await file.close()
 
 
-# Redact and download screenshot
+# Display protected image in Django
+@app.get("/protected/{filename}")
+def get_protected_image(filename: str):
+
+    # Prevent directory paths from being supplied
+    if (
+        not filename.startswith("protected_")
+        or Path(filename).name != filename
+        or filename in {".", ".."}
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid filename."
+        )
+
+    image_path = PROCESSED_FOLDER / filename
+
+    if not image_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="Protected image not found."
+        )
+
+    # Determine media type from the actual file extension
+    extension = image_path.suffix.lower()
+
+    media_types = {
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".bmp": "image/bmp",
+        ".webp": "image/webp",
+        ".tif": "image/tiff",
+        ".tiff": "image/tiff",
+    }
+
+    return FileResponse(
+        path=str(image_path),
+        media_type=media_types.get(extension, "application/octet-stream"),
+    )
+
+
+# Redact and download screenshot using selected categories
 @app.post("/redact/")
 def redact_screenshot(request: RedactRequest):
 
     filename = request.filename
+    selected_categories = request.selected_categories
 
     # Prevent directory paths from being supplied
     if (
@@ -144,10 +210,11 @@ def redact_screenshot(request: RedactRequest):
     output_path = PROCESSED_FOLDER / f"protected_{filename}"
 
     try:
-        # Create a separate protected copy
+        # Create a protected copy using selected categories
         redact_image(
             str(input_path),
-            str(output_path)
+            str(output_path),
+            selected_categories=selected_categories
         )
 
         if not output_path.is_file():
@@ -158,6 +225,9 @@ def redact_screenshot(request: RedactRequest):
             media_type="application/octet-stream",
             filename=f"protected_{filename}",
         )
+
+    except HTTPException:
+        raise
 
     except Exception as error:
         raise HTTPException(
