@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 \# CyberSnap
@@ -96,3 +97,13 @@ Open `http://127.0.0.1:8001/` in your browser.
 
 
 
+=======
+## Project Title
+## Abstract
+## Student and Guide
+## Tech Stack
+## Setup Instructions
+## Screenshots / Demo
+## Problem Statement
+## Outcome
+>>>>>>> 9ceda4a4a183f50566e084bdd54b4d7c13ecce1c
