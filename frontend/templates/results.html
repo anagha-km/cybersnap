@@ -26,9 +26,7 @@
     --high:#fb4f8a;
     --risk:var(--medium);
 }
-
 * { box-sizing:border-box; }
-
 body {
     margin:0;
     font-family:"Inter",Arial,sans-serif;
@@ -40,22 +38,14 @@ body {
     color:var(--text);
     min-height:100vh;
 }
-
 a { color:inherit; text-decoration:none; }
-
-.container {
-    width:88%;
-    max-width:1100px;
-    margin:0 auto;
-}
-
+.container { width:88%; max-width:1100px; margin:0 auto; }
 nav {
     display:flex;
     align-items:center;
     justify-content:space-between;
     padding:28px 0;
 }
-
 .brand {
     display:flex;
     align-items:center;
@@ -64,20 +54,17 @@ nav {
     font-weight:700;
     font-size:24px;
 }
-
 .brand-mark,.home-btn .ic {
     display:grid;
     place-items:center;
     background:var(--grad);
 }
-
 .brand-mark {
     width:38px;
     height:38px;
     border-radius:10px;
     box-shadow:0 0 24px rgba(168,85,247,.45);
 }
-
 .home-btn {
     display:inline-flex;
     align-items:center;
@@ -89,13 +76,11 @@ nav {
     font-weight:600;
     font-size:14px;
 }
-
 .home-btn .ic {
     width:28px;
     height:28px;
     border-radius:50%;
 }
-
 .banner {
     display:grid;
     grid-template-columns:1.1fr 1fr;
@@ -106,9 +91,7 @@ nav {
     margin-top:10px;
     overflow:hidden;
 }
-
 .banner-text { padding:42px; }
-
 .chip {
     display:inline-flex;
     align-items:center;
@@ -120,14 +103,12 @@ nav {
     font-size:14px;
     color:var(--muted);
 }
-
 .chip i {
     width:7px;
     height:7px;
     border-radius:50%;
     background:var(--pink);
 }
-
 h1 {
     font-family:"Sora",sans-serif;
     font-weight:800;
@@ -136,101 +117,65 @@ h1 {
     margin:22px 0 14px;
     letter-spacing:-.02em;
 }
-
 h1 span {
     background:var(--grad);
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
 }
-
-.lead {
-    color:var(--muted);
-    font-size:15px;
-    line-height:1.7;
-}
-
-.banner-visual {
-    min-height:300px;
-}
-
+.lead { color:var(--muted); font-size:15px; line-height:1.7; }
+.banner-visual { min-height:300px; }
 .grid {
     display:grid;
     grid-template-columns:320px 1fr;
     gap:24px;
     margin-top:24px;
 }
-
 .card {
     background:var(--panel);
     border:1px solid var(--line);
     border-radius:22px;
     padding:26px;
 }
-
 .card h3,.stage-card h3 {
     font-family:"Sora",sans-serif;
     font-size:18px;
     margin:0 0 18px;
 }
-
-.risk-card {
-    text-align:center;
-    align-self:start;
-}
-
+.risk-card { text-align:center; align-self:start; }
 .gauge {
     width:190px;
     height:190px;
     margin:4px auto 18px;
     position:relative;
 }
-
 .gauge svg { transform:rotate(-90deg); }
 .gauge .track { stroke:var(--line); }
-
 .gauge .fill {
     stroke:var(--risk);
     stroke-linecap:round;
     transition:stroke-dashoffset .9s ease,stroke .3s;
     filter:drop-shadow(0 0 8px var(--risk));
 }
-
 .gauge-center {
     position:absolute;
     inset:0;
     display:grid;
     place-content:center;
 }
-
 .gauge-center b {
     font-family:"Sora",sans-serif;
     font-size:44px;
     line-height:1;
 }
-
-.gauge-center small {
-    color:var(--muted);
-    font-size:13px;
-    margin-top:4px;
-}
-
+.gauge-center small { color:var(--muted); font-size:13px; margin-top:4px; }
 .risk {
     font-family:"Sora",sans-serif;
     font-size:22px;
     font-weight:700;
     color:var(--risk);
 }
-
-#summary {
-    color:var(--muted);
-    line-height:1.6;
-    margin:10px 0 0;
-    font-size:14px;
-}
-
-/* Category selection */
-
+#summary { color:var(--muted); line-height:1.6; margin:10px 0 0; font-size:14px; }
 .item {
     display:flex;
     gap:14px;
@@ -242,7 +187,6 @@ h1 span {
     border-radius:14px;
     margin-bottom:12px;
 }
-
 .privacy-select {
     display:flex;
     align-items:flex-start;
@@ -251,7 +195,6 @@ h1 span {
     width:100%;
     cursor:pointer;
 }
-
 .privacy-select input {
     width:18px;
     height:18px;
@@ -260,7 +203,6 @@ h1 span {
     cursor:pointer;
     flex:none;
 }
-
 .item-icon {
     flex:none;
     width:36px;
@@ -270,9 +212,7 @@ h1 span {
     display:grid;
     place-items:center;
 }
-
 .item-content { flex:1; min-width:0; }
-
 .type {
     color:#d8b4fe;
     font-weight:600;
@@ -280,41 +220,22 @@ h1 span {
     margin-bottom:8px;
     text-transform:capitalize;
 }
-
 .value-list {
     color:var(--text);
     font-size:14px;
     line-height:1.8;
     overflow-wrap:anywhere;
 }
-
 .value-row {
     border-top:1px solid rgba(185,166,214,.12);
     padding-top:5px;
     margin-top:5px;
 }
-
-.selection-toolbar {
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin:16px 0 10px;
-}
-
-.selection-toolbar button {
-    padding:9px 15px;
-    font-size:13px;
-}
-
-.selection-count {
-    color:var(--muted);
-    font-size:14px;
-    margin:12px 0 18px;
-}
-
+.selection-toolbar { display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 10px; }
+.selection-toolbar button { padding:9px 15px; font-size:13px; }
+.selection-count { color:var(--muted); font-size:14px; margin:12px 0 18px; }
 .no-data { color:var(--low); font-size:16px; }
 .error { color:var(--high); line-height:1.6; }
-
 .actions {
     margin-top:20px;
     display:flex;
@@ -322,7 +243,6 @@ h1 span {
     gap:12px;
     align-items:center;
 }
-
 button,.button-link {
     font:inherit;
     font-weight:600;
@@ -332,43 +252,13 @@ button,.button-link {
     border-radius:999px;
     transition:transform .15s,box-shadow .15s;
 }
-
-button:focus-visible,a:focus-visible {
-    outline:2px solid white;
-    outline-offset:3px;
-}
-
+button:focus-visible,a:focus-visible { outline:2px solid white; outline-offset:3px; }
 button:hover,.button-link:hover { transform:translateY(-1px); }
-
-button:disabled {
-    opacity:.5;
-    cursor:not-allowed;
-    transform:none;
-}
-
-.protect {
-    background:var(--grad);
-    color:white;
-    box-shadow:0 10px 30px rgba(168,85,247,.3);
-}
-
-.scan {
-    background:transparent;
-    color:var(--text);
-    border:1px solid #5b3d8a;
-}
-
+button:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.protect { background:var(--grad); color:white; box-shadow:0 10px 30px rgba(168,85,247,.3); }
+.scan { background:transparent; color:var(--text); border:1px solid #5b3d8a; }
 .scan:hover { background:rgba(168,85,247,.12); }
-
-footer {
-    text-align:center;
-    color:#6f5a92;
-    font-size:13px;
-    padding:40px 0 36px;
-}
-
-/* Redaction preview */
-
+footer { text-align:center; color:#6f5a92; font-size:13px; padding:40px 0 36px; }
 .stage {
     position:fixed;
     inset:0;
@@ -379,9 +269,7 @@ footer {
     backdrop-filter:blur(8px);
     padding:20px;
 }
-
 .stage.on { display:grid; }
-
 .stage-card {
     width:min(640px,94vw);
     text-align:center;
@@ -391,7 +279,6 @@ footer {
     padding:24px;
     box-shadow:0 0 60px rgba(168,85,247,.3);
 }
-
 .rd-frame {
     position:relative;
     aspect-ratio:16/10;
@@ -400,7 +287,6 @@ footer {
     border:1px solid var(--line);
     background:var(--panel-2);
 }
-
 .rd-frame img {
     position:absolute;
     inset:0;
@@ -408,7 +294,6 @@ footer {
     height:100%;
     object-fit:contain;
 }
-
 .rd-nopreview {
     position:absolute;
     inset:0;
@@ -417,17 +302,10 @@ footer {
     color:var(--muted);
     font-size:15px;
 }
-
 .rd-frame.nopreview .rd-nopreview { display:grid; }
 .rd-frame.nopreview #rdBefore { display:none; }
-
-#rdAfter {
-    clip-path:inset(0 100% 0 0);
-    transition:clip-path .9s ease;
-}
-
+#rdAfter { clip-path:inset(0 100% 0 0); transition:clip-path .9s ease; }
 .rd-frame.done #rdAfter { clip-path:inset(0 0 0 0); }
-
 .rd-frame::after {
     content:"";
     position:absolute;
@@ -439,23 +317,14 @@ footer {
     background:linear-gradient(90deg,transparent,var(--pink),var(--purple),transparent);
     animation:rdScan 1.4s ease-in-out infinite;
 }
-
 .rd-frame.done::after { display:none; }
-
 @keyframes rdScan {
     0% { top:0; }
     50% { top:calc(100% - 3px); }
     100% { top:0; }
 }
-
-.rd-label {
-    margin:16px 0 0;
-    font-weight:600;
-    font-size:16px;
-}
-
+.rd-label { margin:16px 0 0; font-weight:600; font-size:16px; }
 .rd-label.ok { color:var(--low); }
-
 .rd-actions {
     display:none;
     margin-top:18px;
@@ -463,42 +332,29 @@ footer {
     justify-content:center;
     flex-wrap:wrap;
 }
-
 .rd-actions.show { display:flex; }
-
-.rd-actions a.protect {
-    display:inline-block;
-    padding:13px 22px;
-    border-radius:999px;
-}
-
+.rd-actions a.protect { display:inline-block; padding:13px 22px; border-radius:999px; }
 @media(max-width:860px) {
     .banner { grid-template-columns:1fr; }
     .banner-text { padding:30px 24px; }
     .banner-visual { min-height:80px; }
     .grid { grid-template-columns:1fr; }
 }
-
 @media(max-width:520px) {
     .container { width:92%; }
     .home-btn .txt { display:none; }
     .card { padding:20px; }
 }
-
 @media(prefers-reduced-motion:reduce) {
-    *,*::before,*::after {
-        animation:none!important;
-        transition:none!important;
-    }
+    *,*::before,*::after { animation:none!important; transition:none!important; }
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-
     <nav>
-        <a class="brand" href="/home/">
+        <a class="brand" href="{% url 'home' %}">
             <span class="brand-mark" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24"
                      fill="none" stroke="#fff" stroke-width="2"
@@ -509,7 +365,7 @@ footer {
             CyberSnap
         </a>
 
-        <a class="home-btn" href="/home/">
+        <a class="home-btn" href="{% url 'home' %}">
             <span class="ic" aria-hidden="true">←</span>
             <span><span class="txt">Back to </span>Home</span>
         </a>
@@ -528,28 +384,20 @@ footer {
     </section>
 
     <div class="grid">
-
         <div class="card risk-card">
             <h3>Privacy risk</h3>
-
             <div class="gauge">
-                <svg width="190" height="190" viewBox="0 0 190 190"
-                     aria-hidden="true">
-                    <circle class="track" cx="95" cy="95" r="80"
-                            fill="none" stroke-width="14"/>
-                    <circle class="fill" id="gaugeFill"
-                            cx="95" cy="95" r="80"
+                <svg width="190" height="190" viewBox="0 0 190 190" aria-hidden="true">
+                    <circle class="track" cx="95" cy="95" r="80" fill="none" stroke-width="14"/>
+                    <circle class="fill" id="gaugeFill" cx="95" cy="95" r="80"
                             fill="none" stroke-width="14"
-                            stroke-dasharray="502.65"
-                            stroke-dashoffset="502.65"/>
+                            stroke-dasharray="502.65" stroke-dashoffset="502.65"/>
                 </svg>
-
                 <div class="gauge-center">
                     <b id="count">–</b>
                     <small>items found</small>
                 </div>
             </div>
-
             <div class="risk" id="riskLevel">Analyzing...</div>
             <p id="summary"></p>
         </div>
@@ -557,44 +405,26 @@ footer {
         <div>
             <section class="card">
                 <h3>Detected sensitive information</h3>
-
                 <p class="lead">
-                    Select a category to mask all detected values within
-                    it. Unselected categories will not be intentionally
-                    masked by the category-based redaction function.
+                    Select a category to mask all detected values within it.
+                    Only selected categories are sent to the redaction backend.
                 </p>
-
                 <div class="selection-toolbar">
-                    <button class="scan" type="button" id="selectAllBtn">
-                        Select all
-                    </button>
-                    <button class="scan" type="button" id="deselectAllBtn">
-                        Deselect all
-                    </button>
+                    <button class="scan" type="button" id="selectAllBtn">Select all</button>
+                    <button class="scan" type="button" id="deselectAllBtn">Deselect all</button>
                 </div>
-
-                <p class="selection-count" id="selectionCount"
-                   aria-live="polite">0 categories selected for masking</p>
-
+                <p class="selection-count" id="selectionCount" aria-live="polite">0 categories selected for masking</p>
                 <div id="results" aria-live="polite">Analyzing...</div>
             </section>
 
             <section class="card" style="margin-top:24px;">
                 <h3>Protection</h3>
-                <p class="lead">
-                    Only selected categories will be passed to the
-                    redaction backend.
-                </p>
-
+                <p class="lead">Only selected categories will be passed to the redaction backend.</p>
                 <div class="actions" style="margin-top:0;">
-                    <button class="protect" id="protectBtn"
-                            type="button" onclick="protectImage()" disabled>
+                    <button class="protect" id="protectBtn" type="button" onclick="protectImage()" disabled>
                         Mask selected items
                     </button>
-
-                    <button class="scan" type="button" onclick="scanAgain()">
-                        Scan another screenshot
-                    </button>
+                    <button class="scan" type="button" onclick="scanAgain()">Scan another screenshot</button>
                 </div>
             </section>
         </div>
@@ -603,32 +433,30 @@ footer {
     <footer>CyberSnap — Your trusted screenshot privacy layer</footer>
 </div>
 
-<div class="stage" id="stage" role="dialog" aria-modal="true"
-     aria-label="Masking screenshot">
+<div class="stage" id="stage" role="dialog" aria-modal="true" aria-label="Masking screenshot">
     <div class="stage-card">
         <h3>Preparing your protected screenshot</h3>
-
         <div class="rd-frame" id="rdFrame">
             <img id="rdBefore" alt="Original screenshot preview">
             <div class="rd-nopreview">Processing screenshot...</div>
             <img id="rdAfter" alt="Protected screenshot preview">
         </div>
-
         <p class="rd-label" id="rdLabel">Masking selected items...</p>
-
         <div class="rd-actions" id="rdActions">
-            <a class="protect" id="rdDownload" href="#">
-                Download protected image
-            </a>
+            <a class="protect" id="rdDownload" href="#">Download protected image</a>
             <button class="scan" id="rdClose" type="button">Close</button>
         </div>
     </div>
 </div>
 
+<!-- Django data fallback: serializes the most recently saved scan safely. -->
+{{ scan.detected_data|json_script:"django-detected-data" }}
+{{ scan.filename|json_script:"django-scan-filename" }}
+{{ scan.protected_filename|json_script:"django-protected-filename" }}
+{{ scan.extracted_text|json_script:"django-extracted-text" }}
+
 <script>
 "use strict";
-
-const storedResult = sessionStorage.getItem("cybersnap_result");
 
 const resultsContainer = document.getElementById("results");
 const riskLevel = document.getElementById("riskLevel");
@@ -637,7 +465,6 @@ const gaugeFill = document.getElementById("gaugeFill");
 const countEl = document.getElementById("count");
 const selectionCount = document.getElementById("selectionCount");
 const protectBtn = document.getElementById("protectBtn");
-
 const CIRC = 502.65;
 
 let scanResult = null;
@@ -647,11 +474,49 @@ let detectionCounter = 0;
 const ICON = `
 <svg width="18" height="18" viewBox="0 0 24 24"
      fill="none" stroke="#d8b4fe" stroke-width="2"
-     stroke-linecap="round" stroke-linejoin="round"
-     aria-hidden="true">
+     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <rect x="4" y="11" width="16" height="10" rx="2"/>
     <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
 </svg>`;
+
+function readJsonScript(id, fallback) {
+    const element = document.getElementById(id);
+    if (!element) return fallback;
+    try {
+        const parsed = JSON.parse(element.textContent);
+        return parsed ?? fallback;
+    } catch (error) {
+        console.error("Could not read Django scan data:", id, error);
+        return fallback;
+    }
+}
+
+function getInitialResult() {
+    const stored = sessionStorage.getItem("cybersnap_result");
+
+    if (stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            if (parsed && typeof parsed === "object") return parsed;
+        } catch (error) {
+            console.error("Session scan result is invalid:", error);
+        }
+    }
+
+    const filename = readJsonScript("django-scan-filename", "");
+    const detected = readJsonScript("django-detected-data", {});
+
+    if (filename) {
+        return {
+            filename: filename,
+            protected_filename: readJsonScript("django-protected-filename", ""),
+            extracted_text: readJsonScript("django-extracted-text", ""),
+            detected_sensitive_data: detected
+        };
+    }
+
+    return null;
+}
 
 function setRisk(label, color, total, fraction) {
     riskLevel.textContent = label;
@@ -661,12 +526,9 @@ function setRisk(label, color, total, fraction) {
 }
 
 function getCheckboxes() {
-    return [
-        ...resultsContainer.querySelectorAll(".category-check")
-    ];
+    return [...resultsContainer.querySelectorAll(".category-check")];
 }
 
-/* Return selected CATEGORY NAMES, not the detected text values. */
 function getSelectedItems() {
     return getCheckboxes()
         .filter(input => input.checked)
@@ -674,32 +536,28 @@ function getSelectedItems() {
 }
 
 function updateSelectionCount() {
-    const selectedCount = getCheckboxes()
-        .filter(input => input.checked).length;
-
+    const selectedCount = getCheckboxes().filter(input => input.checked).length;
     selectionCount.textContent =
-        `${selectedCount} categor${selectedCount === 1 ? "y" : "ies"} selected for masking`;
-
-    protectBtn.disabled =
-        selectedCount === 0 || !scanResult || !scanResult.filename;
+        `${selectedCount} ${selectedCount === 1 ? "category" : "categories"} selected for masking`;
+    protectBtn.disabled = selectedCount === 0 || !scanResult || !scanResult.filename;
 }
 
 function renderResults(detected) {
     resultsContainer.replaceChildren();
     detectionCounter = 0;
 
-    for (const [type, rawValues] of Object.entries(detected || {})) {
-        if (!Array.isArray(rawValues) || rawValues.length === 0) {
-            continue;
-        }
+    if (!detected || typeof detected !== "object" || Array.isArray(detected)) {
+        detected = {};
+    }
 
-        const values = rawValues
+    for (const [type, rawValues] of Object.entries(detected)) {
+        let values = Array.isArray(rawValues) ? rawValues : [];
+
+        values = values
             .filter(value => value !== null && value !== undefined && String(value).length > 0)
             .map(value => String(value));
 
-        if (values.length === 0) {
-            continue;
-        }
+        if (!values.length) continue;
 
         detectionCounter += values.length;
 
@@ -712,13 +570,17 @@ function renderResults(detected) {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.className = "category-check";
-
-        // Preserve the exact backend category key.
         checkbox.value = type;
         checkbox.dataset.type = type;
         checkbox.checked = true;
 
-        checkbox.addEventListener("change", updateSelectionCount);
+checkbox.addEventListener("change", function () {
+    updateSelectionCount();
+
+    console.log("Category:", checkbox.value);
+    console.log("Selected:", checkbox.checked);
+    console.log("All selected categories:", getSelectedItems());
+});
 
         const icon = document.createElement("div");
         icon.className = "item-icon";
@@ -729,17 +591,16 @@ function renderResults(detected) {
 
         const typeElement = document.createElement("div");
         typeElement.className = "type";
-        typeElement.textContent =
-            type.replace(/_/g, " ") + ` (${values.length})`;
+        typeElement.textContent = `${type.replace(/_/g, " ")} (${values.length})`;
 
         const valueList = document.createElement("div");
         valueList.className = "value-list";
 
-        values.forEach((value, index) => {
-            const valueRow = document.createElement("div");
-            valueRow.className = "value-row";
-            valueRow.textContent = value;
-            valueList.append(valueRow);
+        values.forEach(value => {
+            const row = document.createElement("div");
+            row.className = "value-row";
+            row.textContent = value;
+            valueList.append(row);
         });
 
         content.append(typeElement, valueList);
@@ -750,96 +611,25 @@ function renderResults(detected) {
 
     if (detectionCounter === 0) {
         resultsContainer.innerHTML =
-            '<p class="no-data">✓ No sensitive information detected.</p>';
-
+            '<p class="no-data">No sensitive information was detected in the supplied result.</p>';
         setRisk("Low risk", "#4ade80", 0, 0.08);
-
-        summary.textContent =
-            "No supported sensitive information was returned by the scanner.";
-
+        summary.textContent = "No supported sensitive information was returned by the scanner.";
     } else if (detectionCounter <= 2) {
         setRisk("Medium risk", "#fbbf24", detectionCounter, 0.5);
-
-        summary.textContent =
-            `${detectionCounter} sensitive item(s) detected across the listed categories.`;
-
+        summary.textContent = `${detectionCounter} sensitive item(s) detected.`;
     } else {
         setRisk("High risk", "#fb4f8a", detectionCounter, 0.92);
-
-        summary.textContent =
-            `${detectionCounter} sensitive item(s) detected across the listed categories.`;
+        summary.textContent = `${detectionCounter} sensitive item(s) detected.`;
     }
 
     updateSelectionCount();
 }
 
-/* Load the saved scan result. */
-
-if (!storedResult) {
-    setRisk("No result", "#b9a6d6", "–", 0);
-
-    summary.textContent =
-        "Please upload a screenshot from the CyberSnap Home page.";
-
-    resultsContainer.innerHTML =
-        '<p class="error">No scan result available.</p>';
-
-    protectBtn.disabled = true;
-
-} else {
-    try {
-        scanResult = JSON.parse(storedResult);
-
-        renderResults(
-            scanResult.detected_sensitive_data || {}
-        );
-
-    } catch (error) {
-        console.error("Result parsing error:", error);
-
-        setRisk("Error", "#fb4f8a", "–", 0);
-
-        summary.textContent =
-            "Unable to process the scan result.";
-
-        resultsContainer.innerHTML =
-            '<p class="error">Invalid scan result.</p>';
-
-        protectBtn.disabled = true;
-    }
-}
-
-/* Select all categories. */
-
-document.getElementById("selectAllBtn")
-    .addEventListener("click", () => {
-        getCheckboxes().forEach(input => {
-            input.checked = true;
-        });
-
-        updateSelectionCount();
-    });
-
-/* Deselect all categories. */
-
-document.getElementById("deselectAllBtn")
-    .addEventListener("click", () => {
-        getCheckboxes().forEach(input => {
-            input.checked = false;
-        });
-
-        updateSelectionCount();
-    });
-
-/* Start another scan. */
-
 function scanAgain() {
     sessionStorage.removeItem("cybersnap_result");
     sessionStorage.removeItem("cybersnap_preview");
-    window.location.href = "/home/";
+    window.location.href = "{% url 'home' %}";
 }
-
-/* Redaction preview elements. */
 
 const stage = document.getElementById("stage");
 const rdFrame = document.getElementById("rdFrame");
@@ -869,7 +659,6 @@ function openStage(previewSrc) {
 
 function closeStage() {
     stage.classList.remove("on");
-
     if (protectedUrl) {
         URL.revokeObjectURL(protectedUrl);
         protectedUrl = null;
@@ -884,17 +673,25 @@ document.addEventListener("keydown", event => {
     }
 });
 
-/* Send selected category names to the FastAPI backend. */
+document.getElementById("selectAllBtn").addEventListener("click", () => {
+    getCheckboxes().forEach(input => input.checked = true);
+    updateSelectionCount();
+});
+
+document.getElementById("deselectAllBtn").addEventListener("click", () => {
+    getCheckboxes().forEach(input => input.checked = false);
+    updateSelectionCount();
+});
 
 async function protectImage() {
     const selectedCategories = getSelectedItems();
 
     if (!scanResult || !scanResult.filename) {
-        alert("Screenshot filename is missing. Please upload the image again.");
+        alert("Screenshot filename is missing. Please scan the image again.");
         return;
     }
 
-    if (selectedCategories.length === 0) {
+    if (!selectedCategories.length) {
         alert("Select at least one category to mask.");
         return;
     }
@@ -907,84 +704,73 @@ async function protectImage() {
 
     protectBtn.disabled = true;
     protectBtn.textContent = "Masking...";
-
     openStage(previewSrc);
 
     try {
-        const response = await fetch(
-            "http://127.0.0.1:8000/redact/",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/octet-stream"
-                },
-                body: JSON.stringify({
-                    filename: scanResult.filename,
-                    selected_categories: selectedCategories
-                })
-            }
-        );
+        const response = await fetch("http://127.0.0.1:8000/redact/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/octet-stream"
+            },
+            body: JSON.stringify({
+                filename: scanResult.filename,
+                selected_categories: selectedCategories
+            })
+        });
 
         if (!response.ok) {
             let message = "Masking failed.";
-
             try {
                 const errorData = await response.json();
                 message = errorData.detail || errorData.error || message;
-            } catch (_) {
-                // Keep the default error message.
-            }
-
+            } catch (_) {}
             throw new Error(message);
         }
 
         const blob = await response.blob();
+        if (!blob.size) throw new Error("The server returned an empty image.");
 
-        if (blob.size === 0) {
-            throw new Error("The server returned an empty image.");
-        }
-
-        if (protectedUrl) {
-            URL.revokeObjectURL(protectedUrl);
-        }
-
+        if (protectedUrl) URL.revokeObjectURL(protectedUrl);
         protectedUrl = URL.createObjectURL(blob);
         rdAfter.src = protectedUrl;
 
-        try {
-            await rdAfter.decode();
-        } catch (_) {
-            // Continue if the browser renders the image without decode().
-        }
+        try { await rdAfter.decode(); } catch (_) {}
 
         rdFrame.classList.add("done");
         rdLabel.classList.add("ok");
-        rdLabel.textContent = "✓ Selected categories masked";
-
+        rdLabel.textContent = "Selected categories masked";
         rdDownload.href = protectedUrl;
-
-        const safeFilename =
-            String(scanResult.filename).replace(/[\\/]/g, "_");
-
-        rdDownload.download = "protected_" + safeFilename;
+        rdDownload.download = "protected_" + String(scanResult.filename).replace(/[\\/]/g, "_");
         rdActions.classList.add("show");
 
     } catch (error) {
         closeStage();
         console.error("Masking error:", error);
-
-        alert(
-            "Error: " + error.message +
-            "\n\nCheck that the FastAPI backend is running and " +
-            "supports selected_categories."
-        );
-
+        alert("Error: " + error.message +
+            "\n\nCheck that the FastAPI backend is running and supports selected_categories.");
     } finally {
         protectBtn.textContent = "Mask selected items";
         updateSelectionCount();
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    scanResult = getInitialResult();
+
+    if (!scanResult) {
+        setRisk("No result", "#b9a6d6", "–", 0);
+        summary.textContent = "Please scan a screenshot from the CyberSnap Home page first.";
+        resultsContainer.innerHTML = '<p class="error">No scan result available.</p>';
+        protectBtn.disabled = true;
+        return;
+    }
+
+    const detected = scanResult.detected_sensitive_data ||
+        scanResult.detected_data || {};
+
+    renderResults(detected);
+});
 </script>
 </body>
 </html>

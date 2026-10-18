@@ -1,51 +1,80 @@
+
 import cv2
 
 
 def detect_qr_code(image_path):
+    """
+    Detect QR codes in an image.
 
-    image = cv2.imread(image_path)
+    Returns:
+        {
+            "detected": bool,
+            "codes": list[str]
+        }
+    """
+
+    image = cv2.imread(str(image_path))
 
     if image is None:
-        return False, []
+        return {
+            "detected": False,
+            "codes": [],
+        }
 
     detector = cv2.QRCodeDetector()
 
-    # Try the original image
-    data, points, _ = detector.detectAndDecode(image)
+    # Attempt 1: Original image.
+    try:
+        data, points, _ = detector.detectAndDecode(image)
 
-    # QR detected
-    if points is not None:
-        if data:
-            return True, [data]
-        else:
-            return True, ["QR code detected"]
+        if points is not None:
+            codes = [data] if data else ["QR code detected"]
 
-    # Try grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            return {
+                "detected": True,
+                "codes": codes,
+            }
+    except cv2.error:
+        pass
 
-    data, points, _ = detector.detectAndDecode(gray)
+    # Attempt 2: Grayscale image.
+    try:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        data, points, _ = detector.detectAndDecode(gray)
 
-    if points is not None:
-        if data:
-            return True, [data]
-        else:
-            return True, ["QR code detected"]
+        if points is not None:
+            codes = [data] if data else ["QR code detected"]
 
-    # Try enlarged image
-    enlarged = cv2.resize(
-        image,
-        None,
-        fx=4,
-        fy=4,
-        interpolation=cv2.INTER_CUBIC
-    )
+            return {
+                "detected": True,
+                "codes": codes,
+            }
+    except cv2.error:
+        pass
 
-    data, points, _ = detector.detectAndDecode(enlarged)
+    # Attempt 3: Enlarged image.
+    try:
+        enlarged = cv2.resize(
+            image,
+            None,
+            fx=2,
+            fy=2,
+            interpolation=cv2.INTER_CUBIC,
+        )
 
-    if points is not None:
-        if data:
-            return True, [data]
-        else:
-            return True, ["QR code detected"]
+        data, points, _ = detector.detectAndDecode(enlarged)
 
-    return False, []
+        if points is not None:
+            codes = [data] if data else ["QR code detected"]
+
+            return {
+                "detected": True,
+                "codes": codes,
+            }
+    except cv2.error:
+        pass
+
+    return {
+        "detected": False,
+        "codes": [],
+    }

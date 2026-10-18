@@ -1,9 +1,12 @@
 
+import json
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-import json
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
 from .models import ScanHistory
 
@@ -97,7 +100,8 @@ def results_view(request):
 
         try:
             detected_data = json.loads(detected_data_raw)
-            if not isinstance(detected_data, list):
+
+            if not isinstance(detected_data, (list, dict)):
                 detected_data = []
         except (json.JSONDecodeError, TypeError):
             detected_data = []
@@ -115,34 +119,92 @@ def results_view(request):
             detected_data=detected_data
         )
 
-        history = ScanHistory.objects.filter(
-            user=request.user
-        ).order_by("-scan_date")
+    history = ScanHistory.objects.filter(
+        user=request.user
+    ).order_by("-id")
 
+    scan = history.first()
+
+    if scan is None:
         return render(request, "results.html", {
-            "filename": filename,
-            "protected_filename": protected_filename,
-            "extracted_text": extracted_text,
-            "detected_data": detected_data,
-            "history": history
+            "history": history,
+            "error": "No scan results found. Please scan an image first."
         })
 
-    history = ScanHistory.objects.filter(
-        user=request.user
-    ).order_by("-scan_date")
-
     return render(request, "results.html", {
-        "history": history
+        "scan": scan,
+        "filename": scan.filename,
+        "protected_filename": scan.protected_filename,
+        "extracted_text": scan.extracted_text,
+        "detected_data": scan.detected_data,
+        "history": history,
     })
 
 
-# History page
+#```python
+# Scan History with filename search
+
 @login_required
 def history_view(request):
-    history = ScanHistory.objects.filter(
-        user=request.user
-    ).order_by("-scan_date")
+    search_query = request.GET.get("q", "").strip()
 
-    return render(request, "history.html", {
-        "history": history
-    })
+    my_scans = ScanHistory.objects.filter(
+        user=request.user
+    ).order_by("-id")
+
+    if search_query:
+        my_scans = my_scans.filter(
+            filename__icontains=search_query
+        )
+
+    print("LOGGED-IN USER:", request.user.username)
+    print("MY SCANS:", my_scans.count())
+
+    return render(
+        request,
+        "history.html",
+        {
+            "history": my_scans,
+            "search_query": search_query,
+        }
+    )
+
+# Upload view
+# The main screenshot analysis is handled by FastAPI.
+@login_required
+def upload_view(request):
+    if request.method == "POST":
+        screenshot = request.FILES.get("screenshot")
+
+        if not screenshot:
+            return render(request, "home.html", {
+                "error": "Please select a screenshot."
+            })
+
+        allowed_types = [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+        ]
+
+        if screenshot.content_type not in allowed_types:
+            return render(request, "home.html", {
+                "error": "Please upload a PNG, JPG, or WEBP image."
+            })
+
+        if screenshot.size > 10 * 1024 * 1024:
+            return render(request, "home.html", {
+                "error": "Image must be smaller than 10 MB."
+            })
+
+        # This view validates the file only.
+        # Keep your existing home.html JavaScript upload flow
+        # connected to FastAPI for actual scanning and redaction.
+        return render(request, "home.html", {
+            "error": (
+                "Please upload using the CyberSnap scanner "
+                "on this page."
+            )
+        })
+
+    return redirect("home")

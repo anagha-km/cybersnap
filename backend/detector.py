@@ -1,171 +1,157 @@
+
 import re
+import ipaddress
+
+
+def unique(items):
+    return list(dict.fromkeys(items))
 
 
 def detect_sensitive_data(text):
     detected = {}
 
-    # --------------------------------------------------
-    # 1. EMAIL DETECTION
-    # --------------------------------------------------
+    if not isinstance(text, str) or not text.strip():
+        return detected
+
+    # Normalize Windows and Unix line endings.
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+
+    # EMAIL ADDRESSES
     emails = re.findall(
-        r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
-        text
+        r"(?<![\w.+-])[A-Za-z0-9._%+-]+"
+        r"@[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?!\w)",
+        text,
     )
 
     if emails:
-        detected["emails"] = list(dict.fromkeys(emails))
+        detected["emails"] = unique(emails)
 
-
-    # --------------------------------------------------
-    # 2. PHONE NUMBER DETECTION
-    # --------------------------------------------------
+    # PHONE NUMBERS
     phones = re.findall(
-        r"\b(?:\+91[-\s]?)?[6-9]\d{9}\b",
-        text
+        r"(?<!\w)(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}(?!\w)",
+        text,
     )
 
     if phones:
-        detected["phone_numbers"] = list(dict.fromkeys(phones))
+        detected["phone_numbers"] = unique(phones)
 
+    # PASSWORDS: only capture a value on the same line.
+    passwords = []
 
-    # --------------------------------------------------
-    # 3. PASSWORD DETECTION
-    # --------------------------------------------------
-    passwords = re.findall(
-        r"(?i)\b(?:password|passwd|pwd)\s*[:=]\s*([^\s]+)",
-        text
-    )
+    for line in text.splitlines():
+        match = re.search(
+            r"(?i)\b(?:password|passwd|pwd)\s*[:=]\s*"
+            r"([^\s,;]+)",
+            line,
+        )
+
+        if match:
+            value = match.group(1).strip()
+
+            # Do not treat another field label as a password.
+            if value.rstrip(":=").lower() not in {
+                "otp", "email", "phone", "password",
+                "api", "api_key", "username",
+            }:
+                passwords.append(value)
 
     if passwords:
-        detected["passwords"] = list(dict.fromkeys(passwords))
+        detected["passwords"] = unique(passwords)
 
-
-    # --------------------------------------------------
-    # 4. OTP DETECTION
-    # --------------------------------------------------
+    # OTP CODES
     otp_patterns = [
-        r"(?i)\bOTP\s*[:=]?\s*(\d{4,8})\b",
-
+        r"(?i)\bOTP\s*[:=]\s*(\d{4,8})\b",
         r"(?i)\b(?:verification|verify)\s+"
-        r"(?:code|otp)\b.*?\b(\d{4,8})\b",
-
+        r"(?:code|otp)\b[^\n]{0,60}?\b(\d{4,8})\b",
         r"(?i)\bone[-\s]?time\s+"
-        r"(?:password|code)\b.*?\b(\d{4,8})\b"
+        r"(?:password|code)\b[^\n]{0,60}?\b(\d{4,8})\b",
     ]
 
     otps = []
 
     for pattern in otp_patterns:
-        matches = re.findall(pattern, text)
-        otps.extend(matches)
-
-    otps = list(dict.fromkeys(otps))
+        otps.extend(re.findall(pattern, text))
 
     if otps:
-        detected["otp_codes"] = otps
+        detected["otp_codes"] = unique(otps)
 
-
-    # --------------------------------------------------
-    # 5. CARD NUMBER DETECTION
-    # --------------------------------------------------
+    # PAYMENT CARD NUMBERS: validate using Luhn's algorithm.
     card_candidates = re.findall(
-        r"\b(?:\d{4}[-\s]?){3}\d{4}\b",
-        text
+        r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)",
+        text,
     )
 
     valid_cards = []
 
     for card in card_candidates:
+        digits = re.sub(r"\D", "", card)
 
-        # Remove spaces and hyphens
-        card_number = re.sub(r"[-\s]", "", card)
+        if not 13 <= len(digits) <= 19:
+            continue
 
-        # Card numbers are normally 13-19 digits
-        if 13 <= len(card_number) <= 19:
+        checksum = 0
 
-            # Luhn validation
-            digits = [int(d) for d in card_number]
-            checksum = 0
+        for index, char in enumerate(reversed(digits)):
+            digit = int(char)
 
-            parity = len(digits) % 2
+            if index % 2 == 1:
+                digit *= 2
 
-            for i, digit in enumerate(digits):
-                if i % 2 == parity:
-                    digit *= 2
+                if digit > 9:
+                    digit -= 9
 
-                    if digit > 9:
-                        digit -= 9
+            checksum += digit
 
-                checksum += digit
-
-            if checksum % 10 == 0:
-                valid_cards.append(card)
+        if checksum % 10 == 0:
+            valid_cards.append(card.strip())
 
     if valid_cards:
-        detected["card_numbers"] = list(dict.fromkeys(valid_cards))
+        detected["card_numbers"] = unique(valid_cards)
 
-
-    # --------------------------------------------------
-    # 6. API KEY / SECRET KEY DETECTION
-    # --------------------------------------------------
+    # API KEYS / SECRET TOKENS
     api_keys = re.findall(
-        r"(?i)\b(?:api[_-]?key|secret[_-]?key|access[_-]?key)"
-        r"\s*[:=]\s*([A-Za-z0-9_\-]{12,})",
-        text
+        r"(?i)\b(?:api[_ -]?key|secret[_ -]?key|access[_ -]?key)"
+        r"\s*[:=]\s*([A-Za-z0-9_\-/+=]{12,})",
+        text,
     )
 
     if api_keys:
-        detected["api_keys"] = list(dict.fromkeys(api_keys))
+        detected["api_keys"] = unique(api_keys)
 
-
-    # --------------------------------------------------
-    # 7. AADHAAR NUMBER DETECTION
-    # --------------------------------------------------
+    # AADHAAR-LIKE 12-DIGIT NUMBERS
     aadhaar_numbers = re.findall(
-        r"\b\d{4}\s\d{4}\s\d{4}\b",
-        text
+        r"(?<!\d)(?:\d{4}[ -]){2}\d{4}(?!\d)",
+        text,
     )
 
     if aadhaar_numbers:
-        detected["aadhaar_numbers"] = list(
-            dict.fromkeys(aadhaar_numbers)
-        )
+        detected["aadhaar_numbers"] = unique(aadhaar_numbers)
 
-
-    # --------------------------------------------------
-    # 8. PAN NUMBER DETECTION
-    # --------------------------------------------------
+    # INDIAN PAN NUMBERS
     pan_numbers = re.findall(
-        r"\b[A-Z]{5}[0-9]{4}[A-Z]\b",
-        text.upper()
+        r"\b[A-Z]{5}\d{4}[A-Z]\b",
+        text.upper(),
     )
 
     if pan_numbers:
-        detected["pan_numbers"] = list(
-            dict.fromkeys(pan_numbers)
-        )
+        detected["pan_numbers"] = unique(pan_numbers)
 
-
-    # --------------------------------------------------
-    # 9. IP ADDRESS DETECTION
-    # --------------------------------------------------
-    ip_addresses = re.findall(
-        r"\b(?:\d{1,3}\.){3}\d{1,3}\b",
-        text
+    # VALID IP ADDRESSES
+    ip_candidates = re.findall(
+        r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])",
+        text,
     )
 
     valid_ips = []
 
-    for ip in ip_addresses:
-        parts = ip.split(".")
-
-        if all(0 <= int(part) <= 255 for part in parts):
-            valid_ips.append(ip)
+    for candidate in ip_candidates:
+        try:
+            ipaddress.IPv4Address(candidate)
+            valid_ips.append(candidate)
+        except ipaddress.AddressValueError:
+            continue
 
     if valid_ips:
-        detected["ip_addresses"] = list(
-            dict.fromkeys(valid_ips)
-        )
-
+        detected["ip_addresses"] = unique(valid_ips)
 
     return detected
