@@ -1,3 +1,4 @@
+{% load tz %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -348,20 +349,7 @@
         </p>
     </section>
 
-    <div class="toolbar">
-        <input
-            type="search"
-            id="searchInput"
-            placeholder="Search by screenshot filename..."
-            aria-label="Search scan history"
-        >
-
-        <select id="dataFilter" aria-label="Filter scans">
-            <option value="all">All scans</option>
-            <option value="detected">Data detected</option>
-            <option value="clear">No data detected</option>
-        </select>
-    </div>
+    
 
     {% for scan in history %}
         <article class="scan-card"
@@ -372,7 +360,7 @@
                 <div>
                     <div class="filename">{{ scan.filename }}</div>
                     <div class="date">
-                        Scanned on {{ scan.scan_date|date:"d M Y, h:i A" }}
+                       Scanned on {{ scan.scan_date|localtime|date:"d M Y, h:i A" }}
                     </div>
                 </div>
 

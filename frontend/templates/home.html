@@ -654,31 +654,9 @@ footer {
             
             <h2>Scan History</h2>
 
-<form method="GET" action="">
-    <input
-        type="text"
-        name="search"
-        placeholder="Search by filename..."
-        value="{{ search_query }}"
-    >
-    <button type="submit">Search</button>
-</form>
 
-{% for scan in history %}
-    <div>
-        <h3>{{ scan.filename }}</h3>
-    </div>
-{% empty %}
-    <p>No scan history found.</p>
-{% endfor %}
-{% for scan in history %}
-    <div>
-        <p>Filename: {{ scan.filename }}</p>
-        <p>Date: {{ scan.scan_date }}</p>
-    </div>
-{% empty %}
-    <p>No scan history found for your account.</p>
-{% endfor %}
+
+
             <p>Open History to review scans that have been saved to your account.</p>
         </div>
 

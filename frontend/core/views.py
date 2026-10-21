@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 from .models import ScanHistory
 
@@ -40,7 +40,7 @@ def login_view(request):
     return render(request, "login.html")
 
 
-# Register
+# Register with password validation
 def register(request):
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
@@ -48,21 +48,33 @@ def register(request):
         password = request.POST.get("password", "")
         confirm_password = request.POST.get("confirm_password", "")
 
-        if not username or not password:
+        # Check required fields
+        if not username or not email or not password or not confirm_password:
             return render(request, "register.html", {
-                "error": "Username and password are required."
+                "error": "All fields are required."
             })
 
+        # Check whether passwords match
         if password != confirm_password:
             return render(request, "register.html", {
                 "error": "Passwords do not match."
             })
 
+        # Check duplicate username
         if User.objects.filter(username=username).exists():
             return render(request, "register.html", {
                 "error": "Username already exists."
             })
 
+        # Validate password using settings.py rules
+        try:
+            validate_password(password)
+        except ValidationError as errors:
+            return render(request, "register.html", {
+                "error": " ".join(errors.messages)
+            })
+
+        # Create account only if validation succeeds
         User.objects.create_user(
             username=username,
             email=email,
@@ -141,9 +153,7 @@ def results_view(request):
     })
 
 
-#```python
-# Scan History with filename search
-
+# Scan history with filename search
 @login_required
 def history_view(request):
     search_query = request.GET.get("q", "").strip()
@@ -169,8 +179,9 @@ def history_view(request):
         }
     )
 
+
 # Upload view
-# The main screenshot analysis is handled by FastAPI.
+# Screenshot analysis is handled by FastAPI.
 @login_required
 def upload_view(request):
     if request.method == "POST":
@@ -197,9 +208,7 @@ def upload_view(request):
                 "error": "Image must be smaller than 10 MB."
             })
 
-        # This view validates the file only.
-        # Keep your existing home.html JavaScript upload flow
-        # connected to FastAPI for actual scanning and redaction.
+        # Keep the existing JavaScript upload flow connected to FastAPI.
         return render(request, "home.html", {
             "error": (
                 "Please upload using the CyberSnap scanner "

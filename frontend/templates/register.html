@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register - CyberSnap</title>
 <style>
+  .error-message {
+    color: #ff6b81;
+    background: rgba(255, 50, 90, 0.1);
+    border: 1px solid #ff6b81;
+    padding: 12px;
+    border-radius: 9px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
   :root {
     --bg: #0c0714;
     --card-bg: rgba(20, 12, 32, 0.7);
@@ -326,6 +335,11 @@
 
       <h2>Create your account</h2>
       <p class="sub">Start protecting your screenshots in minutes.</p>
+      {% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+{% endif %}
 
       <form method="POST">
         <div style="display:none">{% csrf_token %}</div>
