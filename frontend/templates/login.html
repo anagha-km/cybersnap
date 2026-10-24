@@ -335,7 +335,7 @@
       {% endif %}
 
       <form method="POST">
-        <div style="display:none">{% csrf_token %}</div>
+       {% csrf_token %}
 
         <div class="field">
           <label for="username">Username</label>

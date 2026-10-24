@@ -5,7 +5,6 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from pathlib import Path
 from PIL import Image, ImageDraw
-import shutil
 import uuid
 
 from ocr import extract_text
@@ -60,13 +59,202 @@ class RedactRequest(BaseModel):
 
 
 # --------------------------------------------------
+# RISK SCORE CALCULATION
+# --------------------------------------------------
+
+def get_category_weight(category):
+    """
+    Return the estimated risk weight for a sensitive-data category.
+    """
+
+    category = str(category).lower().replace("_", " ").replace("-", " ")
+
+    high_risk_keywords = [
+        "password",
+        "passcode",
+        "otp",
+        "api key",
+        "secret",
+        "token",
+        "credential",
+        "credit card",
+        "debit card",
+        "bank",
+        "aadhaar",
+        "aadhar",
+        "pan number",
+        "social security",
+        "private key",
+        "authentication",
+    ]
+
+    medium_risk_keywords = [
+        "email",
+        "phone",
+        "mobile",
+        "address",
+        "username",
+        "ip address",
+        "personal name",
+    ]
+
+    if any(keyword in category for keyword in high_risk_keywords):
+        return 30
+
+    if any(keyword in category for keyword in medium_risk_keywords):
+        return 15
+
+    return 8
+
+
+def count_sensitive_items(data, category=""):
+    """
+    Count detected sensitive items recursively.
+
+    Supports dictionaries, lists, and strings returned by the
+    existing detector. Metadata and QR results are handled separately.
+    """
+
+    if data is None:
+        return 0
+
+    if isinstance(data, dict):
+        # A structured detection can represent one detected item.
+        item_category = (
+            data.get("category")
+            or data.get("type")
+            or data.get("label")
+            or category
+        )
+
+        value_keys = (
+            "value",
+            "text",
+            "match",
+            "detected_text",
+        )
+
+        if any(
+            key in data and data[key] not in (None, "")
+            for key in value_keys
+        ):
+            return 1
+
+        ignored_keys = {
+            "qr_codes",
+            "qr_code_detected",
+            "qr_detection_error",
+            "error",
+            "confidence",
+            "location",
+            "coordinates",
+            "bounding_box",
+        }
+
+        total = 0
+
+        for key, value in data.items():
+            if str(key).lower() in ignored_keys:
+                continue
+
+            total += count_sensitive_items(value, str(key))
+
+        return total
+
+    if isinstance(data, (list, tuple, set)):
+        return sum(
+            count_sensitive_items(item, category)
+            for item in data
+        )
+
+    if isinstance(data, str):
+        return 1 if data.strip() else 0
+
+    # Do not treat booleans, confidence scores, or numeric metadata
+    # as separate sensitive items.
+    return 0
+
+
+
+def calculate_risk_score(
+    detected_data,
+    background_results,
+    qr_results,
+):
+    """
+    Calculate an estimated privacy risk score from 0 to 100.
+    """
+
+    score = 0
+
+    # Score sensitive data from detector.py.
+    if isinstance(detected_data, dict):
+        for category, items in detected_data.items():
+            category_name = str(category).lower()
+
+            # QR data is scored separately.
+            if category_name in {
+                "qr_codes",
+                "qr_code_detected",
+                "qr_detection_error",
+            }:
+                continue
+
+            item_count = count_sensitive_items(
+                items,
+                category_name,
+            )
+
+            if item_count:
+                score += (
+                    item_count
+                    * get_category_weight(category_name)
+                )
+
+    elif isinstance(detected_data, list):
+        for item in detected_data:
+            if isinstance(item, dict):
+                category = (
+                    item.get("category")
+                    or item.get("type")
+                    or item.get("label")
+                    or "sensitive data"
+                )
+                item_count = count_sensitive_items(item, category)
+            else:
+                category = "sensitive data"
+                item_count = count_sensitive_items(item, category)
+
+            score += item_count * get_category_weight(category)
+
+    # Score background leakage findings.
+    if isinstance(background_results, dict):
+        findings = background_results.get("findings", [])
+
+        if isinstance(findings, list):
+            score += len(findings) * 15
+
+    # Score QR codes.
+    if isinstance(qr_results, dict):
+        codes = qr_results.get("codes", [])
+        qr_count = len(codes) if isinstance(codes, list) else 0
+
+        if qr_count == 0 and qr_results.get("detected", False):
+            qr_count = 1
+
+        score += qr_count * 15
+
+    return max(0, min(100, int(score)))
+
+
+
+# --------------------------------------------------
 # HELPER: MASK BACKGROUND OCR FINDINGS
 # --------------------------------------------------
 
 def redact_background_findings(protected_path, background_results):
     """
     Mask sensitive regions detected by the background OCR scanner.
-
     Coordinates are read from finding['location'].
     The original uploaded image is not modified.
     """
@@ -93,7 +281,6 @@ def redact_background_findings(protected_path, background_results):
 
         for finding in findings:
             try:
-                # IMPORTANT: coordinates are nested under "location".
                 location = finding.get("location", {})
 
                 x = int(location.get("x", 0))
@@ -104,7 +291,6 @@ def redact_background_findings(protected_path, background_results):
                 if width <= 0 or height <= 0:
                     continue
 
-                # Ignore boxes completely outside the image.
                 if (
                     x >= image_width
                     or y >= image_height
@@ -113,19 +299,23 @@ def redact_background_findings(protected_path, background_results):
                 ):
                     continue
 
-                # Add a little padding around the detected text.
                 padding_x = max(4, int(width * 0.08))
                 padding_y = max(4, int(height * 0.50))
 
                 left = max(0, x - padding_x)
                 top = max(0, y - padding_y)
-                right = min(image_width, x + width + padding_x)
-                bottom = min(image_height, y + height + padding_y)
+                right = min(
+                    image_width,
+                    x + width + padding_x,
+                )
+                bottom = min(
+                    image_height,
+                    y + height + padding_y,
+                )
 
                 if right <= left or bottom <= top:
                     continue
 
-                # Solid black masking; does not merely blur the text.
                 draw.rectangle(
                     (left, top, right, bottom),
                     fill=(0, 0, 0),
@@ -134,10 +324,8 @@ def redact_background_findings(protected_path, background_results):
                 redacted_count += 1
 
             except (TypeError, ValueError, AttributeError):
-                # Skip malformed findings rather than crashing the upload.
                 continue
 
-        # Preserve the output file's format based on its extension.
         suffix = protected_path.suffix.lower()
 
         if suffix in {".jpg", ".jpeg"}:
@@ -153,7 +341,10 @@ def redact_background_findings(protected_path, background_results):
                 quality=95,
             )
         else:
-            image.save(protected_path, format="PNG")
+            image.save(
+                protected_path,
+                format="PNG",
+            )
 
         image.close()
 
@@ -179,7 +370,7 @@ def home():
 @app.post("/upload/")
 async def upload_screenshot(file: UploadFile = File(...)):
 
-    # Validate the filename and extension.
+    # Validate filename and extension.
     if not file.filename:
         raise HTTPException(
             status_code=400,
@@ -192,10 +383,13 @@ async def upload_screenshot(file: UploadFile = File(...)):
     if extension not in ALLOWED_EXTENSIONS:
         raise HTTPException(
             status_code=400,
-            detail="Unsupported file type. Upload PNG, JPG, JPEG or WEBP.",
+            detail=(
+                "Unsupported file type. "
+                "Upload PNG, JPG, JPEG or WEBP."
+            ),
         )
 
-    # Validate declared content type when provided.
+    # Validate declared content type.
     allowed_content_types = {
         "image/png",
         "image/jpeg",
@@ -211,11 +405,11 @@ async def upload_screenshot(file: UploadFile = File(...)):
             detail="The uploaded file must be an image.",
         )
 
-    # Use a generated filename instead of trusting the user's filename.
+    # Generate a safe filename.
     filename = f"{uuid.uuid4().hex}{extension}"
     file_path = UPLOAD_FOLDER / filename
 
-    # Save with a size limit.
+    # Save the image with a size limit.
     total_bytes = 0
 
     try:
@@ -229,20 +423,24 @@ async def upload_screenshot(file: UploadFile = File(...)):
                 total_bytes += len(chunk)
 
                 if total_bytes > MAX_FILE_SIZE:
-                    destination.close()
-                    file_path.unlink(missing_ok=True)
-
                     raise HTTPException(
                         status_code=413,
-                        detail="Image is too large. Maximum size is 15 MB.",
+                        detail=(
+                            "Image is too large. "
+                            "Maximum size is 15 MB."
+                        ),
                     )
 
                 destination.write(chunk)
 
+    except HTTPException:
+        file_path.unlink(missing_ok=True)
+        raise
+
     finally:
         await file.close()
 
-    # Check that the file is a readable image.
+    # Verify that the upload is a readable image.
     try:
         with Image.open(file_path) as image:
             image.verify()
@@ -255,7 +453,7 @@ async def upload_screenshot(file: UploadFile = File(...)):
             detail="The uploaded file is not a valid image.",
         )
 
-    # Always produce a PNG protected image to avoid format mismatches.
+    # Always create a PNG protected image.
     protected_filename = (
         f"protected_{Path(filename).stem}.png"
     )
@@ -266,53 +464,80 @@ async def upload_screenshot(file: UploadFile = File(...)):
     # --------------------------------------------------
 
     try:
-        # Step 1: Extract visible text using OCR.
+        # Step 1: Extract text using OCR.
         extracted_text = extract_text(str(file_path))
 
-        # Step 2: Detect sensitive data using the existing detector.
+        # Step 2: Detect sensitive data.
         detected_data = detect_sensitive_data(extracted_text)
 
-        if not isinstance(detected_data, dict):
+        if not isinstance(detected_data, (dict, list)):
             detected_data = {
                 "detected_items": detected_data
             }
 
-        # Step 3: Scan screenshot background and other OCR regions.
+        if isinstance(detected_data, dict):
+            detected_data = detected_data.copy()
+
+        # Step 3: Scan background information leakage.
         try:
-            background_results = scan_background_leaks(str(file_path))
+            background_results = scan_background_leaks(
+                str(file_path)
+            )
 
             if not isinstance(background_results, dict):
                 background_results = {
                     "leak_count": 0,
                     "findings": [],
-                    "error": "Background scanner returned an unexpected result.",
+                    "error": (
+                        "Background scanner returned "
+                        "an unexpected result."
+                    ),
                 }
 
         except Exception as error:
-            # A background scan failure should not erase OCR results.
+            # Keep the primary OCR results if background scanning fails.
             background_results = {
                 "leak_count": 0,
                 "findings": [],
                 "error": str(error),
             }
 
-       
         # Step 4: Detect QR codes.
         try:
             qr_results = detect_qr_code(str(file_path))
 
-            detected_data["qr_codes"] = qr_results.get("codes", [])
+            if not isinstance(qr_results, dict):
+                qr_results = {
+                    "codes": [],
+                    "detected": False,
+                }
+
+        except Exception as error:
+            qr_results = {
+                "codes": [],
+                "detected": False,
+                "error": str(error),
+            }
+
+        if isinstance(detected_data, dict):
+            detected_data["qr_codes"] = qr_results.get(
+                "codes", []
+            )
             detected_data["qr_code_detected"] = qr_results.get(
                 "detected", False
             )
 
-        except Exception as error:
-            detected_data["qr_codes"] = []
-            detected_data["qr_code_detected"] = False
-            detected_data["qr_detection_error"] = str(error)
+        # Step 5: Calculate privacy risk score.
+        risk_score = calculate_risk_score(
+            detected_data,
+            background_results,
+            qr_results,
+        )
+        print("Detected data:", detected_data)
+        print("Calculated risk score:", risk_score)
+        
 
-
-        # Step 5: Create the first protected image using your redactor.
+        # Step 6: Create the protected image.
         redact_image(
             str(file_path),
             str(protected_path),
@@ -321,32 +546,41 @@ async def upload_screenshot(file: UploadFile = File(...)):
 
         if not protected_path.exists():
             raise RuntimeError(
-                "The redaction function did not create a protected image."
+                "The redaction function did not create "
+                "a protected image."
             )
 
-        # Step 6: Apply masks for background OCR findings.
+        # Step 7: Mask background OCR findings.
         background_redacted_count = redact_background_findings(
-            str(protected_path),
+            protected_path,
             background_results,
         )
 
-        # Step 7: Return results to Django or Swagger.
+        # Step 8: Return the analysis results.
         return {
-            "message": "Screenshot uploaded, analysed and masked successfully.",
+            "message": (
+                "Screenshot uploaded, analysed "
+                "and masked successfully."
+            ),
             "filename": filename,
             "protected_filename": protected_filename,
-            "protected_image_url": f"/protected/{protected_filename}",
+            "protected_image_url": (
+                f"/protected/{protected_filename}"
+            ),
             "extracted_text": extracted_text,
             "detected_sensitive_data": detected_data,
-            "background_redacted_count": background_redacted_count,
+            "background_redacted_count": (
+                background_redacted_count
+            ),
             "background_results": background_results,
+            "risk_score": risk_score,
         }
 
     except HTTPException:
+        protected_path.unlink(missing_ok=True)
         raise
 
     except Exception as error:
-        # Remove an incomplete protected output if processing fails.
         protected_path.unlink(missing_ok=True)
 
         raise HTTPException(
@@ -362,7 +596,6 @@ async def upload_screenshot(file: UploadFile = File(...)):
 @app.get("/protected/{filename}")
 def get_protected_image(filename: str):
 
-    # Prevent paths or directory traversal in the URL.
     if Path(filename).name != filename:
         raise HTTPException(
             status_code=400,
@@ -393,7 +626,6 @@ def redact_selected_categories(request: RedactRequest):
 
     filename = Path(request.filename).name
 
-    # Only accept a filename, not a path.
     if filename != request.filename:
         raise HTTPException(
             status_code=400,
@@ -408,7 +640,9 @@ def redact_selected_categories(request: RedactRequest):
             detail="Original screenshot not found.",
         )
 
-    protected_filename = f"protected_{Path(filename).stem}.png"
+    protected_filename = (
+        f"protected_{Path(filename).stem}.png"
+    )
     protected_path = PROCESSED_FOLDER / protected_filename
 
     try:
@@ -432,5 +666,8 @@ def redact_selected_categories(request: RedactRequest):
     except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail=f"Selected-category redaction failed: {error}",
+            detail=(
+                f"Selected-category redaction failed: {error}"
+            ),
         )
+

@@ -24,6 +24,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+
 body {
     background:
         radial-gradient(60% 50% at 78% 8%,rgba(168,85,247,.20),transparent 60%),
@@ -33,6 +34,7 @@ body {
     font-family: 'Inter',sans-serif;
     overflow-x: hidden;
 }
+
 h1,h2,h3,.logo { font-family: 'Sora',sans-serif; }
 a { color: inherit; text-decoration: none; }
 button,input { font: inherit; }
@@ -48,6 +50,7 @@ nav {
     gap: 20px;
     padding: 26px 0;
 }
+
 .logo {
     display: flex;
     align-items: center;
@@ -56,6 +59,7 @@ nav {
     font-size: 19px;
     white-space: nowrap;
 }
+
 .logo-mark {
     width: 30px;
     height: 30px;
@@ -66,7 +70,9 @@ nav {
     justify-content: center;
     box-shadow: 0 0 18px rgba(168,85,247,.55);
 }
+
 .logo-mark svg { width: 16px; height: 16px; }
+
 .nav-links {
     display: flex;
     align-items: center;
@@ -75,6 +81,7 @@ nav {
     font-size: 14px;
     color: var(--text-dim);
 }
+
 .nav-links a:hover { color: var(--text); }
 
 .nav-cta,.btn-primary {
@@ -91,6 +98,7 @@ nav {
     box-shadow: 0 0 24px rgba(168,85,247,.35);
     text-align: center;
 }
+
 .btn-secondary {
     display: inline-block;
     padding: 12px 20px;
@@ -111,6 +119,7 @@ nav {
     align-items: center;
     padding: 60px 0 70px;
 }
+
 .badge {
     display: inline-flex;
     align-items: center;
@@ -123,6 +132,7 @@ nav {
     color: var(--text-dim);
     margin-bottom: 22px;
 }
+
 .badge::before {
     content: '';
     width: 6px;
@@ -131,18 +141,21 @@ nav {
     background: var(--accent-2);
     box-shadow: 0 0 8px var(--accent-2);
 }
+
 .hero h1 {
     font-size: clamp(32px,4vw,47px);
     line-height: 1.12;
     font-weight: 700;
     margin-bottom: 20px;
 }
+
 .hero h1 span,.grad {
     background: var(--accent-grad);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
+
 .hero p {
     color: var(--text-dim);
     font-size: 15.5px;
@@ -150,7 +163,9 @@ nav {
     max-width: 460px;
     margin-bottom: 28px;
 }
+
 .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+
 .status {
     margin-top: 14px;
     font-size: 13.5px;
@@ -158,6 +173,7 @@ nav {
     min-height: 20px;
     line-height: 1.5;
 }
+
 .status.err { color: #ff8298; }
 .status.success { color: #86efac; }
 
@@ -168,6 +184,7 @@ nav {
     align-items: center;
     height: 400px;
 }
+
 .phone {
     width: 210px;
     height: 370px;
@@ -179,6 +196,7 @@ nav {
     overflow: hidden;
     transform: rotate(-4deg);
 }
+
 .phone-screen {
     position: absolute;
     inset: 14px;
@@ -186,6 +204,7 @@ nav {
     background: linear-gradient(200deg,rgba(168,85,247,.22),rgba(236,72,153,.10));
     overflow: hidden;
 }
+
 .redact-line {
     position: absolute;
     left: 16px;
@@ -193,11 +212,13 @@ nav {
     border-radius: 4px;
     background: rgba(255,255,255,.10);
 }
+
 .redact-line.blur {
     background: var(--accent-grad);
     opacity: .85;
     box-shadow: 0 0 10px rgba(236,72,153,.6);
 }
+
 .scan-bar {
     position: absolute;
     left: 0;
@@ -207,12 +228,14 @@ nav {
     box-shadow: 0 0 16px 3px rgba(236,72,153,.8);
     animation: scan 3.2s ease-in-out infinite;
 }
+
 @keyframes scan {
     0%,100% { top: 8%; opacity: 0; }
     10% { opacity: 1; }
     50% { top: 88%; opacity: 1; }
     60% { opacity: 0; }
 }
+
 .float-icon {
     position: absolute;
     width: 52px;
@@ -226,10 +249,12 @@ nav {
     box-shadow: 0 0 24px rgba(168,85,247,.35);
     animation: float 5s ease-in-out infinite;
 }
+
 .fi-1 { top: 2%; left: 0; }
 .fi-2 { top: 20%; right: 0; animation-delay: .6s; }
 .fi-3 { bottom: 24%; left: 0; animation-delay: 1.2s; }
 .fi-4 { bottom: 2%; right: 0; animation-delay: 1.8s; }
+
 @keyframes float {
     0%,100% { transform: translateY(0); }
     50% { transform: translateY(-12px); }
@@ -240,15 +265,18 @@ nav {
     padding: 25px 0 70px;
     scroll-margin-top: 20px;
 }
+
 .results-section.show { display: block; }
 .results-heading { margin-bottom: 22px; }
 .results-heading h2 { font-size: 29px; margin-bottom: 8px; }
 .results-heading p { color: var(--text-dim); line-height: 1.6; }
+
 .results-grid {
     display: grid;
     grid-template-columns: repeat(2,minmax(0,1fr));
     gap: 18px;
 }
+
 .result-card {
     min-width: 0;
     padding: 22px;
@@ -256,14 +284,18 @@ nav {
     border: 1px solid var(--card-border);
     background: rgba(22,16,42,.92);
 }
+
 .result-card h3 { font-size: 16px; margin-bottom: 15px; }
+
 .result-value {
     color: var(--text-dim);
     font-size: 14px;
     line-height: 1.7;
     overflow-wrap: anywhere;
 }
+
 .result-file { display: flex; gap: 12px; align-items: center; }
+
 .file-symbol {
     width: 43px;
     height: 43px;
@@ -275,7 +307,9 @@ nav {
     background: rgba(168,85,247,.16);
     font-size: 21px;
 }
+
 .result-list { list-style: none; display: grid; gap: 10px; }
+
 .result-list li {
     padding: 11px 12px;
     background: rgba(168,85,247,.08);
@@ -286,7 +320,9 @@ nav {
     line-height: 1.5;
     overflow-wrap: anywhere;
 }
+
 .empty-result { color: #b8a9d1; font-size: 13.5px; line-height: 1.6; }
+
 .text-output {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
@@ -298,6 +334,7 @@ nav {
     font-size: 13px;
     line-height: 1.7;
 }
+
 .results-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 
 .services {
@@ -306,7 +343,9 @@ nav {
     border-top: 1px solid var(--card-border);
     scroll-margin-top: 20px;
 }
+
 .services h2 { font-size: 32px; margin-bottom: 10px; }
+
 .services > p {
     color: var(--text-dim);
     font-size: 14.5px;
@@ -314,12 +353,14 @@ nav {
     margin: 0 auto 40px;
     line-height: 1.6;
 }
+
 .service-grid {
     display: grid;
     grid-template-columns: repeat(3,1fr);
     gap: 22px;
     text-align: left;
 }
+
 .service-card {
     background: var(--card);
     border: 1px solid var(--card-border);
@@ -327,10 +368,12 @@ nav {
     padding: 25px 22px;
     transition: transform .25s ease,box-shadow .25s ease;
 }
+
 .service-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 14px 35px rgba(168,85,247,.15);
 }
+
 .service-icon {
     width: 44px;
     height: 44px;
@@ -341,6 +384,7 @@ nav {
     justify-content: center;
     margin-bottom: 16px;
 }
+
 .service-card h3 { font-size: 16px; margin-bottom: 8px; }
 .service-card p { font-size: 13.5px; color: var(--text-dim); line-height: 1.6; }
 
@@ -349,10 +393,13 @@ nav {
     transform: translateY(34px);
     transition: opacity .8s ease var(--d,0s),transform .8s cubic-bezier(.2,.7,.2,1) var(--d,0s);
 }
+
 .js .reveal.visible { opacity: 1; transform: translateY(0); }
+
 .js .service-card.reveal.visible {
     transition: opacity .8s ease var(--d,0s),transform .25s ease,box-shadow .25s ease;
 }
+
 .js .service-card.reveal.visible:hover { transform: translateY(-5px); }
 
 footer {
@@ -374,7 +421,9 @@ footer {
     background: rgba(10,7,19,.88);
     backdrop-filter: blur(6px);
 }
+
 .overlay.show { display: flex; }
+
 .scan-card {
     width: 100%;
     max-width: 420px;
@@ -385,7 +434,9 @@ footer {
     text-align: center;
     box-shadow: 0 0 60px rgba(168,85,247,.3);
 }
+
 .preview-wrap { display: flex; justify-content: center; }
+
 .preview {
     position: relative;
     display: inline-block;
@@ -396,6 +447,7 @@ footer {
     border: 1px solid rgba(168,124,255,.4);
     animation: glow 2s ease-in-out infinite;
 }
+
 .preview img {
     display: block;
     max-width: 100%;
@@ -403,6 +455,7 @@ footer {
     width: auto;
     height: auto;
 }
+
 .preview::after {
     content: '';
     position: absolute;
@@ -412,6 +465,7 @@ footer {
         linear-gradient(rgba(168,85,247,.10) 1px,transparent 1px) 0 0/100% 22px,
         linear-gradient(90deg,rgba(168,85,247,.10) 1px,transparent 1px) 0 0/22px 100%;
 }
+
 .sweep {
     position: absolute;
     left: 0;
@@ -423,14 +477,17 @@ footer {
     box-shadow: 0 0 14px 3px rgba(236,72,153,.85);
     animation: sweep 2.2s ease-in-out infinite alternate;
 }
+
 @keyframes sweep {
     from { top: 0; }
     to { top: calc(100% - 2px); }
 }
+
 @keyframes glow {
     0%,100% { box-shadow: 0 0 22px rgba(168,85,247,.30); }
     50% { box-shadow: 0 0 42px rgba(236,72,153,.55); }
 }
+
 .corner {
     position: absolute;
     width: 18px;
@@ -438,10 +495,12 @@ footer {
     z-index: 3;
     border: 2px solid var(--accent-2);
 }
+
 .c1 { top: 6px; left: 6px; border-right: 0; border-bottom: 0; }
 .c2 { top: 6px; right: 6px; border-left: 0; border-bottom: 0; }
 .c3 { bottom: 6px; left: 6px; border-right: 0; border-top: 0; }
 .c4 { bottom: 6px; right: 6px; border-left: 0; border-top: 0; }
+
 .scan-title {
     display: flex;
     align-items: center;
@@ -452,6 +511,7 @@ footer {
     font-size: 16px;
     font-family: 'Sora',sans-serif;
 }
+
 .spinner {
     width: 20px;
     height: 20px;
@@ -461,7 +521,9 @@ footer {
     animation: spin .8s linear infinite;
     flex: none;
 }
+
 @keyframes spin { to { transform: rotate(360deg); } }
+
 .scan-sub { color: var(--text-dim); font-size: 13.5px; margin-top: 8px; }
 .scan-name { color: var(--text-dim); font-size: 12.5px; margin-top: 14px; overflow-wrap: anywhere; }
 
@@ -471,12 +533,14 @@ footer {
     .phone { height: 290px; }
     .service-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
+
 @media(max-width:700px) {
     nav { flex-wrap: wrap; }
     .nav-links { gap: 13px; font-size: 12px; }
     .nav-cta { padding: 10px 14px; }
     .results-grid { grid-template-columns: 1fr; }
 }
+
 @media(max-width:560px) {
     .wrap { padding: 0 20px; }
     .hero h1 { font-size: 32px; }
@@ -484,6 +548,7 @@ footer {
     .hero-visual { height: 280px; }
     .phone { width: 175px; height: 260px; }
 }
+
 @media(prefers-reduced-motion:reduce) {
     *,*::before,*::after {
         animation: none !important;
@@ -521,17 +586,13 @@ footer {
         {% endif %}
     </div>
 
-    <button type="button" class="nav-cta" id="getStartedBtn">
-        Get Started
-    </button>
+    <button type="button" class="nav-cta" id="getStartedBtn">Get Started</button>
 </nav>
 
 <section class="hero" id="home">
     <div>
         <div class="badge">Your trusted screenshot privacy layer</div>
-
         <h1>Protecting your <br>screenshots, <span>privately</span></h1>
-
         <p>
             Upload a screenshot and CyberSnap scans it for sensitive
             information — passwords, IDs, tokens and personal data —
@@ -539,13 +600,9 @@ footer {
         </p>
 
         <div class="hero-ctas">
-            <input
-                type="file"
-                id="fileInput"
-                accept="image/png,image/jpeg,image/webp,image/bmp"
-                multiple
-                hidden
-            >
+            <input type="file" id="fileInput"
+                   accept="image/png,image/jpeg,image/webp,image/bmp"
+                   multiple hidden>
             <button type="button" class="btn-primary" id="uploadBtn">
                 Upload Screenshot(s)
             </button>
@@ -612,9 +669,7 @@ footer {
         <a class="btn-primary" href="{% url 'results' %}">
             View Full Report / Privacy Rules
         </a>
-        <a class="btn-secondary" href="{% url 'history' %}">
-            View History
-        </a>
+        <a class="btn-secondary" href="{% url 'history' %}">View History</a>
     </div>
 </section>
 
@@ -640,7 +695,7 @@ footer {
         <div class="service-card reveal" style="--d:.45s">
             <div class="service-icon">◉</div>
             <h3>Privacy protection</h3>
-            <p>Review sensitive areas and use available protection features before sharing your screenshot.</p>
+            <p>Review sensitive areas and use available protection features before sharing them.</p>
         </div>
 
         <div class="service-card reveal" style="--d:.15s">
@@ -651,12 +706,7 @@ footer {
 
         <div class="service-card reveal" style="--d:.3s">
             <div class="service-icon">◷</div>
-            
-            <h2>Scan History</h2>
-
-
-
-
+            <h3>Scan History</h3>
             <p>Open History to review scans that have been saved to your account.</p>
         </div>
 
@@ -749,9 +799,7 @@ uploadBtn.addEventListener("click", openFilePicker);
 getStartedBtn.addEventListener("click", openFilePicker);
 
 function showOverlay(file) {
-    if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-    }
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
 
     previewUrl = URL.createObjectURL(file);
     previewImg.src = previewUrl;
@@ -765,9 +813,7 @@ function showOverlay(file) {
     let index = 0;
     scanSub.textContent = stages[0];
 
-    if (scanTimer) {
-        clearInterval(scanTimer);
-    }
+    if (scanTimer) clearInterval(scanTimer);
 
     scanTimer = setInterval(() => {
         index = (index + 1) % stages.length;
@@ -792,25 +838,18 @@ function hideOverlay() {
 }
 
 function displayListValue(item) {
-    if (typeof item === "string") {
-        return item;
-    }
-
-    if (item === null || item === undefined) {
-        return "";
-    }
+    if (typeof item === "string") return item;
+    if (item === null || item === undefined) return "";
 
     if (typeof item === "object") {
         const type = item.type || item.label || item.category || "Finding";
         const value = item.value || item.text || item.match || "";
-
         return value ? `${type}: ${value}` : JSON.stringify(item);
     }
 
     return String(item);
 }
 
-// Preserve the scanner's original category structure for Custom Privacy Rules.
 function getRawDetectedData(result) {
     return (
         result.detected_sensitive_data ??
@@ -830,7 +869,6 @@ function getDetectedData(result) {
             const value = displayListValue(item);
             if (value) formatted.push(value);
         });
-
         return formatted;
     }
 
@@ -840,10 +878,7 @@ function getDetectedData(result) {
 
             values.forEach(item => {
                 const value = displayListValue(item);
-
-                if (value) {
-                    formatted.push(`${category}: ${value}`);
-                }
+                if (value) formatted.push(`${category}: ${value}`);
             });
         });
     }
@@ -851,30 +886,50 @@ function getDetectedData(result) {
     return formatted;
 }
 
+/*
+ * Save the FastAPI scan result to Django.
+ * The backend risk_score is saved with the scan.
+ */
 async function saveScanToDjango(result, fallbackFilename) {
     const csrfInput = document.querySelector(
         '#csrfForm [name="csrfmiddlewaretoken"]'
     );
 
     if (!csrfInput) {
-        throw new Error("Django CSRF token is missing. Refresh the page and try again.");
+        throw new Error(
+            "Django CSRF token is missing. Refresh the page and try again."
+        );
     }
 
     const saveForm = new FormData();
 
     saveForm.append("filename", result.filename || fallbackFilename);
-
-    // A scan is not automatically a protected screenshot.
-    saveForm.append("protected_filename", "");
-
+    saveForm.append("protected_filename", result.protected_filename || "");
     saveForm.append(
         "extracted_text",
         result.extracted_text || result.extractedText || ""
     );
-
     saveForm.append(
         "detected_data",
         JSON.stringify(getRawDetectedData(result))
+    );
+
+    const rawRiskScore = result.risk_score;
+    const riskScore = Number(rawRiskScore);
+
+    const validRiskScore =
+        rawRiskScore !== undefined &&
+        rawRiskScore !== null &&
+        String(rawRiskScore).trim() !== "" &&
+        Number.isFinite(riskScore);
+
+    saveForm.append(
+        "risk_score",
+        String(
+            validRiskScore
+                ? Math.max(0, Math.min(100, Math.round(riskScore)))
+                : 0
+        )
     );
 
     const response = await fetch("{% url 'results' %}", {
@@ -887,6 +942,8 @@ async function saveScanToDjango(result, fallbackFilename) {
     });
 
     if (!response.ok) {
+        const responseText = await response.text();
+        console.error("Django save failed:", response.status, responseText);
         throw new Error(
             "Django could not save the scan (HTTP " + response.status + ")."
         );
@@ -924,12 +981,8 @@ function displaySingleResults(result) {
     });
 
     noDetected.hidden = findings.length > 0;
-
     section.classList.add("show");
-    section.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function showBatchResults(results) {
@@ -938,14 +991,12 @@ function showBatchResults(results) {
     const grid = document.getElementById("homeResultsGrid");
 
     document.getElementById("resultsTitle").textContent = "Batch Scan Results";
-
     heading.querySelector("p").textContent =
         `${results.length} screenshot(s) processed.`;
 
     grid.replaceChildren();
 
     const successful = results.filter(item => item.success).length;
-
     const withFindings = results.filter(
         item => item.success && item.detected_data.length > 0
     ).length;
@@ -1020,18 +1071,13 @@ function showBatchResults(results) {
     });
 
     section.classList.add("show");
-    section.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 fileInput.addEventListener("change", async function () {
     const files = Array.from(fileInput.files);
 
-    if (!files.length) {
-        return;
-    }
+    if (!files.length) return;
 
     const allowedTypes = [
         "image/png",
@@ -1040,9 +1086,7 @@ fileInput.addEventListener("change", async function () {
         "image/bmp"
     ];
 
-    const invalidFile = files.find(
-        file => !allowedTypes.includes(file.type)
-    );
+    const invalidFile = files.find(file => !allowedTypes.includes(file.type));
 
     if (invalidFile) {
         setStatus(
@@ -1053,7 +1097,6 @@ fileInput.addEventListener("change", async function () {
         return;
     }
 
-    // Optional protection against accidental oversized batch uploads.
     const maxFileSize = 15 * 1024 * 1024;
     const oversizedFile = files.find(file => file.size > maxFileSize);
 
@@ -1076,24 +1119,17 @@ fileInput.addEventListener("change", async function () {
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
 
-            setStatus(
-                `Scanning ${i + 1} of ${files.length}: ${file.name}`
-            );
-
+            setStatus(`Scanning ${i + 1} of ${files.length}: ${file.name}`);
             showOverlay(file);
 
             try {
                 const formData = new FormData();
                 formData.append("file", file);
 
-                // FastAPI screenshot scanning endpoint.
-                const response = await fetch(
-                    "http://127.0.0.1:8000/upload/",
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                );
+                const response = await fetch("http://127.0.0.1:8000/upload/", {
+                    method: "POST",
+                    body: formData
+                });
 
                 if (!response.ok) {
                     let detail = "";
@@ -1101,9 +1137,7 @@ fileInput.addEventListener("change", async function () {
                     try {
                         const errorBody = await response.json();
                         detail = errorBody.detail || errorBody.message || "";
-                    } catch (_) {
-                        // Response might not contain JSON.
-                    }
+                    } catch (_) {}
 
                     throw new Error(
                         detail || `Scanner returned HTTP ${response.status}.`
@@ -1112,21 +1146,21 @@ fileInput.addEventListener("change", async function () {
 
                 const result = await response.json();
 
-                // Save the scan to Django so History can display it.
+                // Persist this scan, including its risk score, in Django.
                 await saveScanToDjango(result, file.name);
 
                 const rawDetected = getRawDetectedData(result);
 
                 const scanForResults = {
                     filename: result.filename || file.name,
-                    protected_filename: "",
+                    protected_filename: result.protected_filename || "",
                     extracted_text:
                         result.extracted_text || result.extractedText || "",
-                    detected_sensitive_data: rawDetected
+                    detected_sensitive_data: rawDetected,
+                    risk_score: result.risk_score ?? 0
                 };
 
                 if (files.length === 1) {
-                    // Store original detection categories for Custom Privacy Rules.
                     sessionStorage.setItem(
                         "cybersnap_result",
                         JSON.stringify(scanForResults)
@@ -1135,19 +1169,22 @@ fileInput.addEventListener("change", async function () {
                     sessionStorage.removeItem("cybersnap_preview");
                     sessionStorage.removeItem("cybersnap_batch_results");
 
-                    setStatus("Scan complete. Opening your privacy report...", "success");
+                    setStatus(
+                        "Scan complete. Opening your privacy report...",
+                        "success"
+                    );
 
-                    // The Results view should allow the user to select masking rules.
                     window.location.href = "{% url 'results' %}";
                     return;
                 }
 
                 batchResults.push({
                     filename: result.filename || file.name,
-                    protected_filename: "",
+                    protected_filename: result.protected_filename || "",
                     extracted_text:
                         result.extracted_text || result.extractedText || "",
                     detected_data: getDetectedData(result),
+                    risk_score: result.risk_score ?? 0,
                     success: true
                 });
 
@@ -1159,6 +1196,7 @@ fileInput.addEventListener("change", async function () {
                     protected_filename: "",
                     extracted_text: "",
                     detected_data: [],
+                    risk_score: 0,
                     success: false,
                     error: error.message || "Unknown error"
                 });
@@ -1205,6 +1243,5 @@ document.getElementById("scanAnotherBtn").addEventListener("click", () => {
     openFilePicker();
 });
 </script>
-
 </body>
 </html>
