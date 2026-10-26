@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 
 \# CyberSnap
@@ -98,6 +97,8 @@ Open `http://127.0.0.1:8001/` in your browser.
 
 
 =======
+=======
+
 ## Project Title
 CyberSnap: Customisable Screenshot Privacy Protection Using Custom Privacy Rules
 ## Abstract
@@ -136,9 +137,16 @@ Install Tesseract OCR separately and configure its executable path in the OCR mo
 7. Use CyberSnap
 Open http://127.0.0.1:8001/ in a browser, log in, upload a screenshot, review the detected sensitive information, and use the available privacy protection features.
 
+<<<<<<< HEAD
 ## Screenshots / Demo
 ## Problem Statement
 CyberSnap addresses the risk of accidental exposure of sensitive information when screenshots are shared online. Screenshots may contain private details such as email addresses, phone numbers, passwords, OTPs, QR codes, and background information that users may overlook. Existing manual methods of protecting screenshots can be time-consuming and may fail to identify all sensitive content. Therefore, a customisable screenshot privacy protection system is required to automatically detect sensitive information, assess privacy risks, and allow users to selectively redact specific information according to their privacy requirements while preserving the remaining screenshot content.
 ## Outcome
 CyberSnap provides a customisable screenshot privacy protection system that detects sensitive information such as email addresses, phone numbers, passwords, OTPs, and QR codes in uploaded screenshots. It enables users to selectively redact the detected information according to their privacy requirements while preserving the remaining screenshot content. The system also supports background information leakage detection, privacy risk assessment, and scan history, helping users identify potential privacy risks and share screenshots more safely.
 >>>>>>> 9ceda4a4a183f50566e084bdd54b4d7c13ecce1c
+=======
+## Problem Statement
+CyberSnap addresses the risk of accidental exposure of sensitive information when screenshots are shared online. Screenshots may contain private details such as email addresses, phone numbers, passwords, OTPs, QR codes, and background information that users may overlook. Existing manual methods of protecting screenshots can be time-consuming and may fail to identify all sensitive content. Therefore, a customisable screenshot privacy protection system is required to automatically detect sensitive information, assess privacy risks, and allow users to selectively redact specific information according to their privacy requirements while preserving the remaining screenshot content.
+## Outcome
+CyberSnap provides a customisable screenshot privacy protection system that detects sensitive information such as email addresses, phone numbers, passwords, OTPs, and QR codes in uploaded screenshots. It enables users to selectively redact the detected information according to their privacy requirements while preserving the remaining screenshot content. The system also supports background information leakag
+>>>>>>> 876c4946cdc02e3ac0593ab42ac0877b268e1ab4
