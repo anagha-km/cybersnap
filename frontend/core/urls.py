@@ -20,5 +20,5 @@ urlpatterns = [
     path("results/", results_view, name="results"),
     path("profile/", profile_view, name="profile"),
     path("history/", history_view, name="history"),
-        path("upload/", upload_view, name="upload"),
+    path("upload/", upload_view, name="upload"),
 ]

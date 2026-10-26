@@ -2,8 +2,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 
     <title>Scan History | CyberSnap</title>
 
@@ -323,6 +325,133 @@
             font-weight: 600;
         }
 
+        /* =====================================================
+           NEW (1/3): ANIMATED GRAPH PANEL (no numbers) — CSS
+           ===================================================== */
+        .hero-viz {
+            position: absolute;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 14px;
+            align-items: stretch;
+            z-index: 2;
+            animation: vizIn .9s .3s ease both;
+        }
+
+        @keyframes vizIn {
+            from { opacity: 0; transform: translateY(-50%) translateX(24px); }
+            to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+        }
+
+        .viz-card {
+            background: rgba(26, 18, 40, .72);
+            border: 1px solid #3a2a50;
+            border-radius: 16px;
+            padding: 14px 16px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 24px rgba(147, 51, 234, .18);
+            overflow: hidden;
+        }
+
+        /* gauge (segments sweep back and forth) */
+        .gauge-card {
+            width: 210px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gauge-card svg { width: 100%; height: auto; overflow: visible; }
+
+        .g-seg {
+            stroke: #2a2038;
+            stroke-width: 7;
+            stroke-linecap: round;
+            transition: stroke .25s ease;
+        }
+
+        .g-seg.on { filter: drop-shadow(0 0 3px rgba(219, 39, 119, .6)); }
+
+        .g-core {
+            fill: none;
+            stroke: #db2777;
+            stroke-width: 1.5;
+            opacity: .5;
+            transform-origin: 100px 100px;
+            animation: corePulse 2.6s ease-in-out infinite;
+        }
+
+        @keyframes corePulse {
+            0%, 100% { transform: scale(.55); opacity: .15; }
+            50%      { transform: scale(.9);  opacity: .6; }
+        }
+
+        .mini-col {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 200px;
+        }
+
+        .mini-card { flex: 1; padding: 12px 14px; display: flex; align-items: flex-end; }
+
+        /* dancing bars */
+        .eq {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            width: 100%;
+            height: 44px;
+        }
+
+        .eq span {
+            flex: 1;
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(180deg, #c084fc, #9333ea);
+            transform-origin: bottom;
+            transform: scaleY(.2);
+            animation: eqMove 1.6s ease-in-out infinite;
+        }
+
+        .eq span:nth-child(3n) { background: linear-gradient(180deg, #db2777, #9333ea); }
+
+        @keyframes eqMove {
+            0%, 100% { transform: scaleY(.18); }
+            50%      { transform: scaleY(1); }
+        }
+
+        /* flowing waves */
+        .wave-box {
+            position: relative;
+            width: 100%;
+            height: 44px;
+            overflow: hidden;
+        }
+
+        .wave-box svg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200%;
+            height: 100%;
+            animation: waveFlow linear infinite;
+        }
+
+        .wave-box .w1 { animation-duration: 5s; }
+        .wave-box .w2 { animation-duration: 8s; animation-direction: reverse; opacity: .8; }
+
+        @keyframes waveFlow {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+
+        .wave-box path { fill: none; stroke-width: 2.2; stroke-linecap: round; }
+        .wave-box .w1 path { stroke: #db2777; filter: drop-shadow(0 0 4px rgba(219, 39, 119, .6)); }
+        .wave-box .w2 path { stroke: #9333ea; filter: drop-shadow(0 0 4px rgba(147, 51, 234, .6)); }
+
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 600px) {
             .container {
@@ -342,6 +471,19 @@
             .home-btn .txt {
                 display: none;
             }
+        }
+
+        /* NEW: on smaller screens the panel drops below the text */
+        @media (max-width: 960px) {
+            .hero-viz {
+                position: static;
+                transform: none;
+                margin-top: 28px;
+                flex-wrap: wrap;
+                animation: none;
+            }
+            .gauge-card { flex: 1 1 220px; }
+            .mini-col   { flex: 1 1 160px; width: auto; }
         }
     </style>
 </head>
@@ -380,6 +522,34 @@
                 Review your previous screenshot scans, detected data,
                 risk scores and redacted images.
             </p>
+
+            <!-- =====================================================
+                 NEW (2/3): ANIMATED GRAPH PANEL (no numbers) — HTML
+                 (keep it INSIDE <section class="hero">, after the subtitle)
+                 ===================================================== -->
+            <div class="hero-viz" aria-hidden="true">
+
+                <!-- Gauge -->
+                <div class="viz-card gauge-card">
+                    <svg viewBox="0 0 200 110">
+                        <circle class="g-core" cx="100" cy="100" r="50"/>
+                        <g id="gaugeSegs"></g>
+                    </svg>
+                </div>
+
+                <div class="mini-col">
+                    <!-- Dancing bars -->
+                    <div class="viz-card mini-card">
+                        <div class="eq" id="eq"></div>
+                    </div>
+
+                    <!-- Flowing waves -->
+                    <div class="viz-card mini-card">
+                        <div class="wave-box" id="waves"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- END NEW HTML -->
         </section>
 
         <div class="history-table-container">
@@ -461,5 +631,98 @@
             </table>
         </div>
     </main>
+
+    <!-- =====================================================
+         NEW (3/3): ANIMATION SCRIPT (no numbers) — paste at the end of the page
+         ===================================================== -->
+    <script>
+    (function () {
+        var NS = 'http://www.w3.org/2000/svg';
+        var reduce = false; /* always animate */
+
+        function blend(t) {                      /* purple -> pink (your theme) */
+            var a = [147, 51, 234], b = [219, 39, 119];
+            return 'rgb(' + a.map(function (v, i) { return Math.round(v + (b[i] - v) * t); }).join(',') + ')';
+        }
+
+        /* ---------- 1) gauge: segments sweep up and down forever ---------- */
+        var group = document.getElementById('gaugeSegs');
+        var N = 21, cx = 100, cy = 100, r1 = 62, r2 = 90, segs = [];
+        for (var i = 0; i < N; i++) {
+            var ang = Math.PI - (i / (N - 1)) * Math.PI;
+            var l = document.createElementNS(NS, 'line');
+            l.setAttribute('x1', (cx + Math.cos(ang) * r1).toFixed(2));
+            l.setAttribute('y1', (cy - Math.sin(ang) * r1).toFixed(2));
+            l.setAttribute('x2', (cx + Math.cos(ang) * r2).toFixed(2));
+            l.setAttribute('y2', (cy - Math.sin(ang) * r2).toFixed(2));
+            l.setAttribute('class', 'g-seg');
+            group.appendChild(l);
+            segs.push(l);
+        }
+        var lastLit = -1;
+        function paint(level) {                  /* level: 0..N */
+            var lit = Math.round(level);
+            if (lit === lastLit) return;
+            lastLit = lit;
+            segs.forEach(function (s, i) {
+                if (i < lit) {
+                    s.style.stroke = blend(i / (N - 1));
+                    s.classList.add('on');
+                } else {
+                    s.style.stroke = '';
+                    s.classList.remove('on');
+                }
+            });
+        }
+        if (reduce) {
+            paint(N * 0.7);
+        } else {
+            (function loop(ts) {
+                var t = ts / 1000;
+                /* two sines mixed = organic, never-repeating feel */
+                var v = (Math.sin(t * 0.9) * 0.6 + Math.sin(t * 2.1) * 0.4 + 1) / 2;
+                paint(v * N);
+                requestAnimationFrame(loop);
+            })(0);
+        }
+
+        /* ---------- 2) bars: each one dances with its own rhythm ---------- */
+        var eq = document.getElementById('eq');
+        for (var b = 0; b < 14; b++) {
+            var bar = document.createElement('span');
+            bar.style.animationDuration = (1 + Math.random() * 1.4).toFixed(2) + 's';
+            bar.style.animationDelay = (-Math.random() * 2).toFixed(2) + 's';
+            eq.appendChild(bar);
+        }
+
+        /* ---------- 3) waves: seamless looping sine lines ---------- */
+        function wavePath(cycles, amp, phase) {
+            var W = 400, H = 44, mid = H / 2, d = '';
+            for (var x = 0; x <= W; x += 4) {
+                var y = mid + Math.sin((x / W) * Math.PI * 2 * cycles + phase) * amp
+                            + Math.sin((x / W) * Math.PI * 2 * cycles * 2 + phase) * amp * 0.25;
+                d += (x ? 'L' : 'M') + x + ' ' + y.toFixed(1) + ' ';
+            }
+            return d;
+        }
+        /* svg is 200% wide and holds the pattern twice, so -50% translate loops perfectly */
+        function waveSvg(cls, cycles, amp, phase) {
+            var svg = document.createElementNS(NS, 'svg');
+            svg.setAttribute('class', cls);
+            svg.setAttribute('viewBox', '0 0 800 44');
+            svg.setAttribute('preserveAspectRatio', 'none');
+            [0, 400].forEach(function (off) {
+                var p = document.createElementNS(NS, 'path');
+                p.setAttribute('d', wavePath(cycles, amp, phase));
+                p.setAttribute('transform', 'translate(' + off + ' 0)');
+                svg.appendChild(p);
+            });
+            return svg;
+        }
+        var box = document.getElementById('waves');
+        box.appendChild(waveSvg('w2', 3, 9, 1.2));
+        box.appendChild(waveSvg('w1', 2, 13, 0));
+    })();
+    </script>
 </body>
 </html>
